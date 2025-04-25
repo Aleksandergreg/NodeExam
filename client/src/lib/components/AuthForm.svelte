@@ -1,24 +1,26 @@
 <script>
     import { toast } from 'svelte-5-french-toast';
-    import { fetchPost } from '../utils/fetchApi.js';
-    import { authStore } from '../stores/authStore.js';
-    import { navigate } from 'svelte-routing'; // Import navigate for redirection
+    // Import only the necessary function(s) directly
+    import { setUser } from '../stores/authStore.js'; // Ensure path is correct
+    import { fetchPost } from '../utils/fetchApi.js'; // Ensure path is correct
+    import { navigate } from 'svelte-routing';
+    import '../styles/authForm.css';
 
-    let isLoginView = $state(true); // Controls which form is visually prominent
 
-    // Form fields - using $state for reactivity
+    let isLoginView = $state(true);
+
+    // Form fields - using $state is correct inside .svelte files
     let email = $state('');
     let password = $state('');
-    let username = $state(''); // For signup
-    let confirmPassword = $state(''); // For signup validation
+    let username = $state('');
+    let confirmPassword = $state('');
 
     let isLoading = $state(false);
     let errorMessage = $state('');
 
     function toggleView() {
         isLoginView = !isLoginView;
-        errorMessage = ''; // Clear errors on view switch
-        // Reset fields on switch (optional, depends on desired UX)
+        errorMessage = '';
         email = '';
         password = '';
         username = '';
@@ -26,14 +28,14 @@
     }
 
     async function handleLogin(event) {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault();
         isLoading = true;
         errorMessage = '';
         try {
             const data = await fetchPost('/auth/login', { email, password });
-            authStore.setUser(data.user); // Update auth store
+            setUser(data.user); // Call the imported function directly
             toast.success(data.message || 'Login successful!');
-            navigate('/dashboard'); // Redirect to dashboard after login
+            navigate('/dashboard');
         } catch (error) {
             console.error("Login failed:", error);
              errorMessage = error.data?.message || error.message || 'Login failed. Please check your credentials.';
@@ -54,10 +56,8 @@
          errorMessage = '';
          try {
              const data = await fetchPost('/auth/signup', { username, email, password });
-              // Signup response includes user data and logs them in via session
-             authStore.setUser(data.user); // Update auth store
+             setUser(data.user); // Call the imported function directly
              toast.success(data.message || 'Signup successful! Welcome!');
-              // Maybe send to dashboard or a "welcome" page
              navigate('/dashboard');
          } catch (error) {
              console.error("Signup failed:", error);
@@ -75,7 +75,6 @@
 
         <div class="auth-form-section auth-signup">
             <form onsubmit={handleSignup}>
-                 <label onclick={toggleView} aria-hidden="true">Sign up</label>
                 <input type="text" name="txt" placeholder="User name" required bind:value={username} disabled={isLoading}>
                 <input type="email" name="email" placeholder="Email" required bind:value={email} disabled={isLoading}>
                 <input type="password" name="pswd" placeholder="Password" required bind:value={password} disabled={isLoading}>
@@ -84,22 +83,25 @@
                 <button type="submit" disabled={isLoading}>
                     {#if isLoading && !isLoginView}Signing up...{:else}Sign up{/if}
                 </button>
+                <button type="button" class="view-toggle-button" onclick={toggleView}>Go to log in</button>
+
             </form>
         </div>
 
         <div class="auth-form-section auth-login">
-            <form onsubmit={handleLogin}>
-                 <label onclick={toggleView} aria-hidden="true">Login</label>
+             <form onsubmit={handleLogin}>
                 <input type="email" name="email" placeholder="Email" required bind:value={email} disabled={isLoading}>
                 <input type="password" name="pswd" placeholder="Password" required bind:value={password} disabled={isLoading}>
                  <div class="error-message">{errorMessage && isLoginView ? errorMessage : ''}</div>
                 <button type="submit" disabled={isLoading}>
-                     {#if isLoading && isLoginView}Logging in...{:else}Login{/if}
+                     {#if isLoading && isLoginView}Logging in...{:else}Log in{/if}
                 </button>
+                <button type="button" class="view-toggle-button" onclick={toggleView}>Sign up</button>
+
             </form>
         </div>
 
     </div>
 </div>
 
-<style src="../styles/authForm.css"></style>
+<!-- <style src="../styles/authForm.css"></style> -->

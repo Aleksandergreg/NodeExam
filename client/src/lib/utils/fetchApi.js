@@ -2,7 +2,7 @@
 const BASE_URL = 'http://localhost:8080'; // Your backend URL
 
 async function fetchApi(path, options = {}) {
-    const url = `<span class="math-inline">\{BASE\_URL\}</span>{path}`;
+    const url = `${BASE_URL}${path}`; // Use template literal correctly
 
     // Ensure credentials (cookies) are sent with requests
     options.credentials = 'include';

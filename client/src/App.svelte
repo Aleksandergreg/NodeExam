@@ -2,101 +2,92 @@
   import { Router, Link, Route, navigate } from "svelte-routing";
   import { toast } from 'svelte-5-french-toast';
 
-import { authStore } from './lib/stores/authStore.js';
-import { fetchPost } from './lib/utils/fetchApi.js';
-import HomePage from "./lib/pages/HomePage.svelte";
-import LoginPage from "./lib/pages/LoginPage.svelte";
-import DashboardPage from "./lib/pages/DashboardPage.svelte";
-import Toaster from "./lib/components/Toaster.svelte";
-  export let url = ""; // Needed for svelte-routing
+  // Import individual stores and functions
+  import { user, loading, clearUser, checkSession } from './lib/stores/authStore.js';
+  import { fetchPost } from './lib/utils/fetchApi.js';
+  // Import Pages and Components (ensure paths are correct)
+  import HomePage from "./lib/pages/HomePage.svelte";
+  import LoginPage from "./lib/pages/LoginPage.svelte";
+  import DashboardPage from "./lib/pages/DashboardPage.svelte";
+  import Toaster from "./lib/components/Toaster.svelte";
 
-  // --- Protected Route Logic ---
-  //$: user = authStore.user; // Subscribe to user changes Svelte 5 style - using the store directly is reactive
+  export let url = "";
+
+  // Use $ directly with the imported stores
+  $: console.log("[App.svelte] Loading state:", $loading);
+  $: console.log("[App.svelte] User state:", $user);
 
   function requireAuth() {
-     // Use authStore directly inside functions/handlers
-     if (!authStore.loading && !authStore.user) {
+     // Access store values directly with $
+     if (!$loading && !$user) { // Check $loading and $user
         toast.error("Please log in to access this page.");
-        navigate('/login', { replace: true }); // Redirect to login
-        return false; // Indicate auth failed
+        navigate('/login', { replace: true });
+        return false;
      }
-     return true; // Indicate auth passed
+     return true;
   }
 
   function requireNoAuth() {
-      // Redirect logged-in users away from login page
-      if (!authStore.loading && authStore.user) {
+      // Access store values directly with $
+      if (!$loading && $user) { // Check $loading and $user
           navigate('/dashboard', { replace: true });
           return false;
       }
       return true;
   }
 
-
   async function handleLogout() {
       try {
           await fetchPost('/auth/logout');
-          authStore.clearUser(); // Clear user state in store
+          clearUser(); // Call imported function directly
           toast.success('Logout successful!');
-          navigate('/'); // Redirect to home page
+          navigate('/');
       } catch (error) {
           console.error("Logout failed:", error);
           toast.error(error.data?.message || error.message || 'Logout failed.');
       }
   }
-
 </script>
 
 <Router {url}>
   <nav>
     <Link to="/">Home</Link>
-    {#if authStore.user}
-      <Link to="/dashboard">Dashboard</Link>
-      <button class="logout-button" on:click={handleLogout}>Logout ({authStore.user.username})</button>
-    {:else if !authStore.loading}
-      <Link to="/login">Login/Sign Up</Link>
+    {#if $user} <Link to="/dashboard">Dashboard</Link>
+      <button class="logout-button" on:click={handleLogout}>Logout ({$user.username})</button>
+    {:else if !$loading} <Link to="/login">Login/Sign Up</Link>
     {/if}
-     {#if authStore.loading}
-          <span>&nbsp;Loading...</span>
+     {#if $loading} <span>&nbsp;Loading...</span>
      {/if}
   </nav>
 
   <main>
-    {#if authStore.loading}
-        <p>Loading application...</p>
+    {#if $loading} <p>Loading application...</p>
     {:else}
          <Route path="/" component={HomePage} />
-
          <Route path="/login" >
               {#if requireNoAuth()} <LoginPage /> {/if}
          </Route>
-
         <Route path="/dashboard">
              {#if requireAuth()} <DashboardPage /> {/if}
         </Route>
-
-         {/if}
+    {/if}
   </main>
 
   <Toaster position="bottom-center" />
 </Router>
 
 <style>
-  nav {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background-color: #eee;
-    margin-bottom: 1rem;
-    align-items: center; /* Align button vertically */
-  }
-   nav a, nav button {
-        text-decoration: none;
-        color: #333;
-   }
-   nav a:hover {
-       color: #007bff;
-   }
+    /* ... styles remain the same ... */
+    nav {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: #eee;
+        margin-bottom: 1rem;
+        align-items: center; /* Align button vertically */
+    }
+    /* Style Links if needed, e.g., using :global or specific classes */
+    /* nav :global(a) { ... } */
 
     .logout-button {
         background: none;
@@ -111,7 +102,7 @@ import Toaster from "./lib/components/Toaster.svelte";
         text-decoration: underline;
     }
 
-  main {
-    padding: 1rem;
-  }
+    main {
+        padding: 1rem;
+    }
 </style>
