@@ -4,7 +4,6 @@ import session from 'express-session';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 
-// Import Routers
 import authRouter from './routers/authRouter.js';
 import protectedRouter from './routers/protectedRouter.js';
 
@@ -14,8 +13,7 @@ const app = express();
 app.use(helmet());
 
 // --- CORS Configuration ---
-// Allow requests from your Svelte frontend development server and production URL
-const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173']; // Add your production frontend URL here
+const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173']; 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (allowedOrigins.includes(origin)) {
@@ -28,7 +26,6 @@ app.use((req, res, next) => {
      // Allowed methods
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
 
-    // Handle preflight requests (OPTIONS)
     if (req.method === 'OPTIONS') {
         return res.sendStatus(204); // No Content
     }
@@ -52,7 +49,7 @@ app.use(session({
     resave: false, // Don't save session if unmodified
     saveUninitialized: false, // Don't create session until something stored
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production (HTTPS)
+        secure: process.env.NODE_ENV === 'production', 
         httpOnly: true, 
         maxAge: 24 * 60 * 60 * 1000 // Cookie expiration time
     }

@@ -1,4 +1,3 @@
-// Middleware to check if the user is authenticated
 export function isAuthenticated(req, res, next) {
     if (req.session && req.session.userId) {
         return next();
@@ -9,7 +8,7 @@ export function isAuthenticated(req, res, next) {
 
 export function isAdmin(req, res, next) {
 
-    const hardcodedAdminUserId = 'user1'; // Assume user1 is the admin
+    const hardcodedAdminUserId = 'user1'; 
 
     if (req.session && req.session.userId === hardcodedAdminUserId) {
         req.isAdmin = true; 

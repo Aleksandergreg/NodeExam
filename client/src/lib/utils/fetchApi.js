@@ -1,4 +1,3 @@
-// Simple fetch wrapper - enhance as needed (error handling, etc.)
 const BASE_URL = 'http://localhost:8080'; // Your backend URL
 
 async function fetchApi(path, options = {}) {
@@ -28,7 +27,6 @@ async function fetchApi(path, options = {}) {
             try {
                 data = await response.json();
             } catch (e) {
-                // Handle cases where response is not JSON (e.g., plain text error)
                 console.warn(`Response from ${url} was not valid JSON.`);
                 // Optionally try to read as text: data = await response.text();
             }

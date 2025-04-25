@@ -43,7 +43,6 @@ router.post('/auth/signup', async (req, res) => {
          sendSignupEmail(email, username, username).catch(err => console.error("Failed to send signup email async:", err));
 
 
-        // Optionally log the user in immediately after signup
         req.session.userId = newUserId;
         req.session.username = username;
         req.session.userRole = 'user'; 
@@ -67,8 +66,7 @@ router.post('/auth/login', async (req, res) => {
         return res.status(400).send({ message: "Email and password are required." });
     }
 
-    // Find user by email (in our hardcoded object)
-    const user = Object.values(users).find(u => u.email === email);
+        const user = Object.values(users).find(u => u.email === email);
 
     if (!user) {
         return res.status(401).send({ message: "Invalid credentials." }); // Keep messages vague

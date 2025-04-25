@@ -2,10 +2,8 @@
   import { Router, Link, Route, navigate } from "svelte-routing";
   import { toast } from 'svelte-5-french-toast';
 
-  // Import individual stores and functions
   import { user, loading, clearUser, checkSession } from './lib/stores/authStore.js';
   import { fetchPost } from './lib/utils/fetchApi.js';
-  // Import Pages and Components (ensure paths are correct)
   import HomePage from "./lib/pages/HomePage.svelte";
   import LoginPage from "./lib/pages/LoginPage.svelte";
   import DashboardPage from "./lib/pages/DashboardPage.svelte";
@@ -13,12 +11,10 @@
 
   export let url = "";
 
-  // Use $ directly with the imported stores
   $: console.log("[App.svelte] Loading state:", $loading);
   $: console.log("[App.svelte] User state:", $user);
 
   function requireAuth() {
-     // Access store values directly with $
      if (!$loading && !$user) { // Check $loading and $user
         toast.error("Please log in to access this page.");
         navigate('/login', { replace: true });
@@ -28,7 +24,6 @@
   }
 
   function requireNoAuth() {
-      // Access store values directly with $
       if (!$loading && $user) { // Check $loading and $user
           navigate('/dashboard', { replace: true });
           return false;
@@ -39,7 +34,7 @@
   async function handleLogout() {
       try {
           await fetchPost('/auth/logout');
-          clearUser(); // Call imported function directly
+          clearUser(); 
           toast.success('Logout successful!');
           navigate('/');
       } catch (error) {

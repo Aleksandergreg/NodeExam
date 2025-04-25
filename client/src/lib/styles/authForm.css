@@ -106,7 +106,6 @@
 }
 
 
-/* --- State Transitions based on parent class --- */
 
 /* When .show-login is active on .auth-main */
 .auth-main.show-login .auth-login {

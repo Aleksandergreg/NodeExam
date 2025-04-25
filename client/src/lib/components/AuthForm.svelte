@@ -1,15 +1,13 @@
 <script>
     import { toast } from 'svelte-5-french-toast';
-    // Import only the necessary function(s) directly
-    import { setUser } from '../stores/authStore.js'; // Ensure path is correct
-    import { fetchPost } from '../utils/fetchApi.js'; // Ensure path is correct
+    import { setUser } from '../stores/authStore.js'; 
+    import { fetchPost } from '../utils/fetchApi.js'; 
     import { navigate } from 'svelte-routing';
     import '../styles/authForm.css';
 
 
     let isLoginView = $state(true);
 
-    // Form fields - using $state is correct inside .svelte files
     let email = $state('');
     let password = $state('');
     let username = $state('');
@@ -33,7 +31,7 @@
         errorMessage = '';
         try {
             const data = await fetchPost('/auth/login', { email, password });
-            setUser(data.user); // Call the imported function directly
+            setUser(data.user); 
             toast.success(data.message || 'Login successful!');
             navigate('/dashboard');
         } catch (error) {
@@ -56,7 +54,7 @@
          errorMessage = '';
          try {
              const data = await fetchPost('/auth/signup', { username, email, password });
-             setUser(data.user); // Call the imported function directly
+             setUser(data.user); 
              toast.success(data.message || 'Signup successful! Welcome!');
              navigate('/dashboard');
          } catch (error) {

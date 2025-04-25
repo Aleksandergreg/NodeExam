@@ -1,4 +1,3 @@
-// src/lib/stores/authStore.js (Corrected Export Structure)
 import { writable } from 'svelte/store';
 import { fetchGet } from '../utils/fetchApi.js'; // Make sure path is correct
 
@@ -27,14 +26,12 @@ async function checkSession() {
 }
 
 // Function to update user state after login/signup
-// Export action functions directly
 export function setUser(userData) {
     user.set(userData);
     console.log("AuthStore: User set", userData);
 }
 
 // Function to clear user state on logout
-// Export action functions directly
 export function clearUser() {
     user.set(null);
     console.log("AuthStore: User cleared");
@@ -43,5 +40,4 @@ export function clearUser() {
 // Run checkSession once when the module is first imported
 checkSession();
 
-// Optionally export checkSession if needed elsewhere
 export { checkSession };

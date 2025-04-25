@@ -1,14 +1,12 @@
 <script>
-    // Import individual stores needed
     import { user, loading } from '../stores/authStore.js'; // Corrected import
     import { fetchGet } from '../utils/fetchApi.js'; // Ensure path is correct
     import { toast } from 'svelte-5-french-toast';
     import { onMount } from 'svelte';
 
-    // Internal component state using $state is fine here
     let dashboardMessage = $state('Loading dashboard data...');
     let adminMessage = $state('');
-    let isLoadingData = $state(false); // For internal loading state of this component's fetches
+    let isLoadingData = $state(false); 
 
     async function fetchDashboardData() {
          isLoadingData = true;
