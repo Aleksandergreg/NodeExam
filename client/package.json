@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "svelte-5-french-toast": "^2.0.4",
-    "svelte-routing": "^2.13.0"
+    "svelte-spa-router": "^4.0.1",
+    "tinro": "^0.6.12"
   }
 }
