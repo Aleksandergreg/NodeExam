@@ -13,7 +13,7 @@ export async function sendSignupEmail(toEmail, toName, username) {
   const emailParams = new EmailParams()
     .setFrom(sentFrom)
     .setTo(recipients)
-    .setReplyTo(sentFrom) // Optional: Set where replies should go
+    .setReplyTo(sentFrom)
     .setSubject(`Welcome to ${process.env.MAILERSEND_FROM_NAME}, ${username}!`)
     .setHtml(`
       <h1>Welcome aboard, ${username}!</h1>
