@@ -1,103 +1,107 @@
 <script>
-  import { Router, Link, Route, navigate } from "svelte-routing";
+  import { Route, router as tinroRouter, active } from 'tinro';
   import { toast } from 'svelte-5-french-toast';
 
-  import { user, loading, clearUser, checkSession } from './lib/stores/authStore.js';
+
+  import { user as userStore, loading as loadingStore, clearUser, checkSession } from './lib/stores/authStore.js';
   import { fetchPost } from './lib/utils/fetchApi.js';
-  import HomePage from "./lib/pages/HomePage.svelte";
-  import LoginPage from "./lib/pages/LoginPage.svelte";
-  import DashboardPage from "./lib/pages/DashboardPage.svelte";
-  import Toaster from "./lib/components/Toaster.svelte";
+  import HomePage from './lib/pages/HomePage.svelte';
+  import LoginPage from './lib/pages/LoginPage.svelte';
+  import DashboardPage from './lib/pages/DashboardPage.svelte';
+  import Toaster from './lib/components/Toaster.svelte';
 
-  export let url = "";
+  let user = $state(null);
+  let loading = $state(true);
 
-  $: console.log("[App.svelte] Loading state:", $loading);
-  $: console.log("[App.svelte] User state:", $user);
+  $effect(() => {
+    const unsubUser = userStore.subscribe(value => user = value);
+    const unsubLoading = loadingStore.subscribe(value => loading = value);
+    return () => {
+        unsubUser();
+        unsubLoading();
+    };
+  });
 
-  function requireAuth() {
-     if (!$loading && !$user) { // Check $loading and $user
+  // --- Guards ---
+  function isUserLoggedIn() {
+      return !loading && !!user;
+  }
+  function isUserLoggedOut() {
+      return !loading && !user;
+  }
+
+  // --- Redirection Effect ---
+  $effect(() => {
+    if (!loading) {
+      const currentPath = window.location.pathname;
+      if (user && currentPath === '/login') {
+        console.log("Effect: User logged in, redirecting from /login");
+        tinroRouter.goto('/dashboard', { replace: true });
+      } else if (!user && currentPath === '/dashboard') {
+        console.log("Effect: User not logged in, redirecting from /dashboard");
         toast.error("Please log in to access this page.");
-        navigate('/login', { replace: true });
-        return false;
-     }
-     return true;
-  }
-
-  function requireNoAuth() {
-      if (!$loading && $user) { // Check $loading and $user
-          navigate('/dashboard', { replace: true });
-          return false;
+        tinroRouter.goto('/login', { replace: true });
       }
-      return true;
-  }
+    }
+  });
 
+  // --- Logout Handler ---
   async function handleLogout() {
-      try {
-          await fetchPost('/auth/logout');
-          clearUser(); 
-          toast.success('Logout successful!');
-          navigate('/');
-      } catch (error) {
-          console.error("Logout failed:", error);
-          toast.error(error.data?.message || error.message || 'Logout failed.');
-      }
+    try {
+        await fetchPost('/auth/logout');
+        clearUser();
+        toast.success('Logout successful!');
+        tinroRouter.goto('/', { replace: true });
+    } catch (error) {
+        console.error('Logout failed:', error);
+        toast.error(error.data?.message || error.message || 'Logout failed.');
+    }
   }
+
 </script>
 
-<Router {url}>
+{#if loading}
+  <p>Loading application...</p>
+{:else}
   <nav>
-    <Link to="/">Home</Link>
-    {#if $user} <Link to="/dashboard">Dashboard</Link>
-      <button class="logout-button" on:click={handleLogout}>Logout ({$user.username})</button>
-    {:else if !$loading} <Link to="/login">Login/Sign Up</Link>
+    <a href="/" use:active={{exact: true}}>Home</a>
+    {#if user}
+        <a href="/dashboard" use:active>Dashboard</a>
+        <button class="logout-button" onclick={handleLogout}>Logout ({user.username})</button>
+    {:else if !loading}
+        <a href="/login" use:active>Login/Sign Up</a>
     {/if}
-     {#if $loading} <span>&nbsp;Loading...</span>
-     {/if}
   </nav>
 
   <main>
-    {#if $loading} <p>Loading application...</p>
-    {:else}
-         <Route path="/" component={HomePage} />
-         <Route path="/login" >
-              {#if requireNoAuth()} <LoginPage /> {/if}
-         </Route>
-        <Route path="/dashboard">
-             {#if requireAuth()} <DashboardPage /> {/if}
-        </Route>
-    {/if}
+      <Route path="/">
+          <HomePage />
+      </Route>
+      <Route path="/login">
+          {#if isUserLoggedOut()}
+              <LoginPage />
+          {/if}
+      </Route>
+      <Route path="/dashboard">
+           {#if isUserLoggedIn()}
+               <DashboardPage />
+           {/if}
+      </Route>
   </main>
 
   <Toaster position="bottom-center" />
-</Router>
+{/if}
 
 <style>
-    /* ... styles remain the same ... */
-    nav {
-        display: flex;
-        gap: 1rem;
-        padding: 1rem;
-        background-color: #eee;
-        margin-bottom: 1rem;
-        align-items: center; /* Align button vertically */
-    }
-    /* Style Links if needed, e.g., using :global or specific classes */
-    /* nav :global(a) { ... } */
+    a.active {
+      font-weight: bold;
 
-    .logout-button {
-        background: none;
-        border: none;
-        padding: 0;
-        font: inherit;
-        cursor: pointer;
-        color: #dc3545; /* Red color for logout */
-        margin-left: auto; /* Push logout button to the right */
-    }
-    .logout-button:hover {
-        text-decoration: underline;
     }
 
-    main {
-        padding: 1rem;
-    }
+    nav { display: flex; gap: 1rem; padding: 1rem; background-color: #eee; margin-bottom: 1rem; align-items: center; color: #333; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    nav a { color: #0056b3; text-decoration: none; padding: 0.5rem 0; }
+    nav a:hover { text-decoration: underline; color: #003d80; }
+    .logout-button { background: none; border: none; padding: 0.5rem 0; margin: 0; font: inherit; cursor: pointer; color: #c82333; margin-left: auto; }
+    .logout-button:hover { text-decoration: underline; color: #a71d2a; }
+    main { padding: 1rem; }
 </style>
