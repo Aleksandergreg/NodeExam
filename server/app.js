@@ -63,7 +63,7 @@ const generalLimiter = rateLimit({
     legacyHeaders: false,
     message: { message: "Too many requests from this IP, please try again after 15 minutes." }
 });
-app.use(generalLimiter);
+// app.use(generalLimiter);
 
 // Stricter limiter for authentication routes
 const authLimiter = rateLimit({
@@ -73,7 +73,7 @@ const authLimiter = rateLimit({
     legacyHeaders: false,
     message: { message: "Too many authentication attempts from this IP, please try again after 15 minutes." }
 });
-app.use('/auth', authLimiter); // Apply specifically to /auth paths
+// app.use('/auth', authLimiter); // Apply specifically to /auth paths
 
 // --- Routers ---
 app.use(authRouter);         
