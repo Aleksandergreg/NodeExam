@@ -17,6 +17,7 @@
     "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.1",
     "helmet": "^8.1.0",
-    "mailersend": "^2.5.0"
+    "mailersend": "^2.5.0",
+    "pg": "^8.15.6"
   }
 }
