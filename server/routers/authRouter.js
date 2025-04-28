@@ -1,4 +1,3 @@
-// server/routers/authRouter.js
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import { sendSignupEmail } from '../utils/mailer.js';
