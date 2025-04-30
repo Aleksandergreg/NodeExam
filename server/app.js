@@ -25,7 +25,7 @@ app.use(sessionMiddleware);
 app.use(generalLimiter);
 app.use('/auth', authLimiter);
 
-// your routers
+// routers
 app.use(routers);
 
 // 404 and global error 
