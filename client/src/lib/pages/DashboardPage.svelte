@@ -1,6 +1,6 @@
 <script>
-    import { user, loading } from '../stores/authStore.js'; // Corrected import
-    import { fetchGet } from '../utils/fetchApi.js'; // Ensure path is correct
+    import { user, loading } from '../stores/authStore.js'; 
+    import { fetchGet } from '../utils/fetchApi.js'; 
     import { toast } from 'svelte-5-french-toast';
     import { onMount } from 'svelte';
 
@@ -39,8 +39,7 @@
     // Fetch data when the component mounts
     onMount(() => {
          fetchDashboardData();
-         // Check the role using the reactive $user store value
-         if ($user?.role === 'admin') { // Use $user here
+         if ($user?.role === 'admin') {
              fetchAdminData();
          } else {
              adminMessage = 'You do not have admin privileges according to the auth store.';
