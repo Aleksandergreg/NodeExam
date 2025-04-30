@@ -1,14 +1,18 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
-import { sendSignupEmail } from '../utils/mailer.js';
-import { query } from '../utils/db.js'; // Import the query function
+import crypto from 'crypto'; 
+import {
+    sendSignupEmail,
+    sendPasswordResetEmail, 
+    sendPasswordChangeConfirmationEmail 
+} from '../utils/mailer.js';
+import { query } from '../utils/db.js'; 
 
 const router = Router();
 const saltRounds = 12;
+const passwordResetTokenExpiryHours = 1; 
 
-
-// Signup Route
-router.post('/auth/signup', async (req, res) => {
+router.post('/auth/signup', async (req, res, next) => { 
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
@@ -22,34 +26,28 @@ router.post('/auth/signup', async (req, res) => {
         if (existingUsers.length > 0) {
             const existingEmail = existingUsers.find(u => u.email === email);
             const existingUsername = existingUsers.find(u => u.username === username);
-            if (existingEmail) {
-                return res.status(409).send({ message: "Email already in use." });
-            }
-             if (existingUsername) {
-                return res.status(409).send({ message: "Username already taken." });
-            }
+            if (existingEmail) return res.status(409).send({ message: "Email already in use." });
+            if (existingUsername) return res.status(409).send({ message: "Username already taken." });
         }
 
-
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const insertSql = `
             INSERT INTO users (username, email, hashed_password, role)
             VALUES ($1, $2, $3, $4)
-            RETURNING id, username, email, role; -- Return the created user's details
+            RETURNING id, username, email, role;
         `;
         const defaultRole = 'user';
         const { rows } = await query(insertSql, [username, email, hashedPassword, defaultRole]);
-        const newUser = rows[0]; // Get the user data returned by the query
+        const newUser = rows[0];
 
         console.log("New user created in DB:", newUser);
 
-        // Send signup email (fire-and-forget)
-        sendSignupEmail(newUser.email, newUser.username).catch(err => console.error("Failed to send signup email async:", err));
+        // Send signup email (fire-and-forget, log errors)
+        sendSignupEmail(newUser.email, newUser.username, newUser.username)
+            .catch(err => console.error("Failed to send signup email async:", err));
 
-        // --- Session Creation ---
-        // Store relevant, non-sensitive user info in the session
+        // Create session
         req.session.userId = newUser.id;
         req.session.username = newUser.username;
         req.session.userRole = newUser.role;
@@ -60,21 +58,12 @@ router.post('/auth/signup', async (req, res) => {
          });
 
     } catch (error) {
-        console.error("Signup database/bcrypt error:", error);
-        if (error.code === '23505') { // PostgreSQL unique violation error code
-             if (error.constraint === 'users_email_key') {
-                return res.status(409).send({ message: "Email already in use (concurrent)." });
-             }
-             if (error.constraint === 'users_username_key') {
-                 return res.status(409).send({ message: "Username already taken (concurrent)." });
-             }
-        }
-        res.status(500).send({ message: "Error creating user." });
+        console.error("Signup Error:", error);
+        next(error);
     }
 });
 
-// Login Route
-router.post('/auth/login', async (req, res) => {
+router.post('/auth/login', async (req, res, next) => { 
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -82,47 +71,49 @@ router.post('/auth/login', async (req, res) => {
     }
 
     try {
-        // Find user by email
         const findUserSql = 'SELECT id, username, email, hashed_password, role FROM users WHERE email = $1';
         const { rows } = await query(findUserSql, [email]);
 
         if (rows.length === 0) {
-            // User not found - using generic message for security
-            return res.status(401).send({ message: "Invalid credentials." });
+            return res.status(401).send({ message: "Invalid credentials." }); 
         }
 
-        const user = rows[0]; // The found user record
-
-        // Compare submitted password with stored hash
+        const user = rows[0];
         const match = await bcrypt.compare(password, user.hashed_password);
 
         if (match) {
-            req.session.userId = user.id;
-            req.session.username = user.username;
-            req.session.userRole = user.role; // Store role in session
+            req.session.regenerate(err => {
+                if (err) {
+                    console.error("Session regeneration error:", err);
+                    return next(err); 
+                }
+                req.session.userId = user.id;
+                req.session.username = user.username;
+                req.session.userRole = user.role;
 
-            console.log("Login successful, session created for user:", user.username);
-            res.status(200).send({
-                message: "Login successful!",
-                user: { id: user.id, username: user.username, email: user.email, role: user.role }
+                console.log("Login successful, session regenerated for user:", user.username);
+                res.status(200).send({
+                    message: "Login successful!",
+                    user: { id: user.id, username: user.username, email: user.email, role: user.role }
+                });
             });
         } else {
-            // Passwords don't match - use generic message
             res.status(401).send({ message: "Invalid credentials." });
         }
     } catch (error) {
-        console.error("Login database/bcrypt error:", error);
-        res.status(500).send({ message: "Server error during login." });
+        console.error("Login Error:", error);
+        next(error);
     }
 });
 
-router.post('/auth/logout', (req, res) => {
+router.post('/auth/logout', (req, res, next) => { 
     req.session.destroy(err => {
         if (err) {
             console.error("Session destruction error:", err);
-            return res.status(500).send({ message: "Could not log out, please try again." });
+            res.clearCookie('connect.sid');
+            return next(new Error("Could not log out completely, please clear cookies.")); 
         }
-        res.clearCookie('connect.sid'); // Use the default session cookie name unless configured otherwise
+        res.clearCookie('connect.sid'); 
         console.log("User logged out, session destroyed.");
         res.status(200).send({ message: "Logout successful." });
     });
@@ -142,5 +133,112 @@ router.get('/auth/session', (req, res) => {
         res.status(200).send({ loggedIn: false });
     }
 });
+
+
+router.post('/auth/request-password-reset', async (req, res, next) => { 
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).send({ message: "Email is required." });
+    }
+
+    try {
+        const findUserSql = 'SELECT id, username, email FROM users WHERE email = $1';
+        const { rows } = await query(findUserSql, [email]);
+
+        if (rows.length > 0) {
+            const user = rows[0];
+
+            const rawToken = crypto.randomBytes(32).toString('hex');
+            const tokenHash = await bcrypt.hash(rawToken, saltRounds);
+
+            const expiresAt = new Date();
+            expiresAt.setHours(expiresAt.getHours() + passwordResetTokenExpiryHours);
+
+            const insertTokenSql = `
+                INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+                VALUES ($1, $2, $3)
+            `;
+            await query(insertTokenSql, [user.id, tokenHash, expiresAt]);
+
+            sendPasswordResetEmail(user.email, user.username, rawToken, user.id)
+                .catch(err => console.error("Failed to send password reset email async:", err));
+        } else {
+            console.log(`Password reset requested for non-existent email: ${email}`);
+        }
+
+        res.status(200).send({ message: "If an account with that email exists, a password reset link has been sent." });
+
+    } catch (error) {
+        console.error("Request Password Reset Error:", error);
+        next(error); 
+    }
+});
+
+
+router.post('/auth/reset-password', async (req, res, next) => { 
+    const { userId, token, newPassword } = req.body;
+
+    if (!userId || !token || !newPassword) {
+        return res.status(400).send({ message: "User ID, token, and new password are required." });
+    }
+
+    if (newPassword.length < 8) {
+         return res.status(400).send({ message: "Password must be at least 8 characters long." });
+    }
+
+    try {
+        const findTokenSql = `
+            SELECT id, token_hash, user_id, expires_at
+            FROM password_reset_tokens
+            WHERE user_id = $1 AND expires_at > NOW()
+            ORDER BY created_at DESC -- Get the latest token if multiple exist (though ideally delete old ones)
+            LIMIT 1;
+        `;
+        const { rows: tokenRows } = await query(findTokenSql, [userId]);
+
+        if (tokenRows.length === 0) {
+            console.log(`No valid reset token found for user ID: ${userId}`);
+            return res.status(400).send({ message: "Invalid or expired password reset token." });
+        }
+
+        const storedToken = tokenRows[0];
+
+        const tokenMatch = await bcrypt.compare(token, storedToken.token_hash);
+
+        if (!tokenMatch) {
+            console.log(`Token mismatch for user ID: ${userId}`);
+            return res.status(400).send({ message: "Invalid or expired password reset token." }); 
+        }
+
+        const newHashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+        const updateUserSql = 'UPDATE users SET hashed_password = $1 WHERE id = $2 RETURNING email, username';
+        const { rows: updatedUserRows } = await query(updateUserSql, [newHashedPassword, userId]);
+
+        if (updatedUserRows.length === 0) {
+            console.error(`Failed to find user with ID ${userId} after validating token.`);
+            return res.status(404).send({ message: "User not found during password update." });
+        }
+
+        const updatedUser = updatedUserRows[0];
+
+        const deleteTokenSql = 'DELETE FROM password_reset_tokens WHERE id = $1';
+        await query(deleteTokenSql, [storedToken.id]);
+
+        console.log(`Password successfully reset for user ID: ${userId}`);
+
+        sendPasswordChangeConfirmationEmail(updatedUser.email, updatedUser.username)
+             .catch(err => console.error("Failed to send password change confirmation email async:", err));
+
+
+        res.status(200).send({ message: "Password updated successfully." });
+
+    } catch (error) {
+        console.error("Reset Password Error:", error);
+        next(error); 
+    }
+});
+
 
 export default router;
