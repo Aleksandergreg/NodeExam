@@ -32,4 +32,3 @@ export async function sendSignupEmail(toEmail, toName, username) {
     console.error(`Error sending signup email to ${toEmail}:`, error?.response?.data?.errors || error.message);
   }
 }
-
