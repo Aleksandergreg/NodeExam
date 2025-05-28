@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { fetchGet } from '../utils/fetchApi';
-    import RaceCard from './RaceCard.svelte';
+    import RaceCard from '../components/RaceCard.svelte';
 
     let searchTerm = '';
     let results = [];
@@ -42,6 +42,9 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 1rem;
+    }
+    .error-message {
+        color: red;
     }
 </style>
 

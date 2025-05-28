@@ -2,14 +2,14 @@
   import { Route, router as tinroRouter, active } from 'tinro';
   import { toast } from 'svelte-5-french-toast';
 
-
   import { user as userStore, loading as loadingStore, clearUser, checkSession } from './lib/stores/authStore.js';
   import { fetchPost } from './lib/utils/fetchApi.js';
   import HomePage from './lib/pages/HomePage.svelte';
   import LoginPage from './lib/pages/LoginPage.svelte';
   import DashboardPage from './lib/pages/DashboardPage.svelte';
-  import RequestPasswordResetPage from './lib/pages/RequestPasswordResetPage.svelte'; 
-  import ResetPasswordPage from './lib/pages/ResetPasswordPage.svelte'; 
+  import RequestPasswordResetPage from './lib/pages/RequestPasswordResetPage.svelte';
+  import ResetPasswordPage from './lib/pages/ResetPasswordPage.svelte';
+  import RacesPage from './lib/pages/RacesPage.svelte'; // Import the new RacesPage
   import Toaster from './lib/components/Toaster.svelte';
 
   let user = $state(null);
@@ -68,7 +68,7 @@
   <p>Loading application...</p> {:else}
   <nav>
     <a href="/" use:active={{exact: true}}>Home</a>
-    {#if user}
+    <a href="/races" use:active>Races</a> {#if user}
         <a href="/dashboard" use:active>Dashboard</a>
         <button class="logout-button" onclick={handleLogout}>Logout ({user.username})</button>
     {:else if !loading}
@@ -79,6 +79,9 @@
   <main>
       <Route path="/">
           <HomePage />
+      </Route>
+
+      <Route path="/races"> <RacesPage />
       </Route>
 
       <Route path="/login">
@@ -97,7 +100,6 @@
            {/if}
       </Route>
 
-
       <Route path="/dashboard">
            {#if isUserLoggedIn()}
                <DashboardPage />
@@ -115,12 +117,6 @@
 {/if}
 
 <style>
-    a.active {
-      font-weight: bold;
-      /* Add more distinct styling for active links */
-       border-bottom: 2px solid #0056b3;
-       color: #0056b3;
-    }
 
     nav { display: flex; gap: 1rem; padding: 1rem; background-color: #f8f9fa; margin-bottom: 1rem; align-items: center; color: #343a40; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     nav a { color: #007bff; text-decoration: none; padding: 0.5rem 0; transition: color 0.2s ease-in-out, border-bottom 0.2s ease-in-out; }

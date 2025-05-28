@@ -10,7 +10,7 @@
     let email = $state('');
     let password = $state('');
     let username = $state('');
-    let confirmPassword = $state('');
+    let confirmPassword = $state(''); 
     let isLoading = $state(false);
     let errorMessage = $state('');
 
