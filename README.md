@@ -1,8 +1,8 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/eWobU840)
 
-## Auth system
+## Live cycling blog and auth system
 
-**A authentication and authorization system build with Node.js with Express backend utilizing a PostgreSQL database and a Svelte5 frontend**
+**A live cycling blow and authentication and authorization system build with Node.js with Express backend utilizing a PostgreSQL database and a Svelte5 frontend**
 
 ## Prerequisites
 
