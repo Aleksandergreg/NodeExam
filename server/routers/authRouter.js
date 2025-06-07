@@ -7,10 +7,14 @@ import {
     sendPasswordChangeConfirmationEmail 
 } from '../utils/mailer.js';
 import { query } from '../utils/db.js'; 
+import stripe from 'stripe';
+
 
 const router = Router();
 const saltRounds = 12;
 const passwordResetTokenExpiryHours = 1; 
+const stripeClient = stripe(process.env.STRIPE_SECRET_KEY);
+
 
 router.post('/auth/signup', async (req, res, next) => { 
     const { username, email, password } = req.body;
@@ -237,6 +241,41 @@ router.post('/auth/reset-password', async (req, res, next) => {
     } catch (error) {
         console.error("Reset Password Error:", error);
         next(error); 
+    }
+});
+
+router.post('/auth/create-checkout-session', async (req, res, next) => {
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).send({ message: 'User ID is required.' });
+    }
+
+    try {
+        const session = await stripeClient.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: 'Premium Subscription',
+                        },
+                        unit_amount: 2000, // $20.00
+                    },
+                    quantity: 1,
+                },
+            ],
+            mode: 'payment',
+            success_url: `${process.env.FRONTEND_URL}/payment-success`,
+            cancel_url: `${process.env.FRONTEND_URL}/payment-cancelled`,
+            client_reference_id: userId,
+        });
+
+        res.status(200).send({ id: session.id });
+    } catch (error) {
+        console.error('Failed to create Stripe Checkout session:', error);
+        next(error);
     }
 });
 
