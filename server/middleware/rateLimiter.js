@@ -12,7 +12,7 @@ export const generalLimiter = rateLimit({
 
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 10,
+  limit: 200, //Note to self: Change this for production
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: {
