@@ -1,4 +1,6 @@
 <script>
+        
+    import { onMount } from 'svelte'; 
     import { fetchGet } from '../utils/fetchApi.js';
 
     let year = new Date().getFullYear() - 1;
@@ -22,6 +24,10 @@
             isLoading = false;
         }
     }
+
+    onMount(() => {
+        fetchSchedule();
+    });
 </script>
 
 <style>
