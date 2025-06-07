@@ -1,7 +1,7 @@
-const BASE_URL = 'http://localhost:8080'; // Your backend URL
+const BASE_URL = 'http://localhost:8080';
 
 async function fetchApi(path, options = {}) {
-    const url = `${BASE_URL}${path}`; // Use template literal correctly
+    const url = `${BASE_URL}${path}`; 
 
     // Ensure credentials (cookies) are sent with requests
     options.credentials = 'include';
@@ -38,7 +38,7 @@ async function fetchApi(path, options = {}) {
             // The calling code can then access error.status and error.data
             const error = new Error(data?.message || `HTTP error! status: ${response.status}`);
             error.status = response.status;
-            error.data = data; // Attach parsed error data
+            error.data = data;
             throw error;
         }
 
@@ -47,7 +47,6 @@ async function fetchApi(path, options = {}) {
 
     } catch (error) {
         console.error(`API Fetch Error (${options.method || 'GET'} ${path}):`, error);
-        // Re-throw the error so the calling component can handle it
         throw error;
     }
 }

@@ -13,7 +13,8 @@
   import Toaster from './lib/components/Toaster.svelte';
   import PremiumButton from './lib/components/PremiumButton.svelte';
   import PremiumContent from './lib/components/PremiumContent.svelte';
-  import PaymentSuccessPage from './lib/pages/PaymentSuccessPage.svelte'; // <-- IMPORT THE NEW PAGE
+  import PaymentSuccessPage from './lib/pages/PaymentSuccessPage.svelte';
+  import RankingsPage from './lib/pages/RankingsPage.svelte';
 
 
   let user = $state(null);
@@ -74,6 +75,7 @@
   <nav>
     <a href="/" use:active={{exact: true}}>Home</a>
     <a href="/races" use:active>Races</a>
+    <a href="/rankings" use:active>Rankings</a>
     {#if user}
         <a href="/dashboard" use:active>Dashboard</a>
         <PremiumButton />
@@ -90,6 +92,10 @@
 
       <Route path="/races">
           <RacesPage />
+      </Route>
+
+      <Route path="/rankings">
+          <RankingsPage />
       </Route>
 
       <Route path="/login">
