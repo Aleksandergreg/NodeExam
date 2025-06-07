@@ -9,8 +9,10 @@
   import DashboardPage from './lib/pages/DashboardPage.svelte';
   import RequestPasswordResetPage from './lib/pages/RequestPasswordResetPage.svelte';
   import ResetPasswordPage from './lib/pages/ResetPasswordPage.svelte';
-  import RacesPage from './lib/pages/RacesPage.svelte'; // Import the new RacesPage
+  import RacesPage from './lib/pages/RacesPage.svelte';
   import Toaster from './lib/components/Toaster.svelte';
+  import PremiumButton from './lib/components/PremiumButton.svelte';
+  import PremiumContent from './lib/components/PremiumContent.svelte';
 
   let user = $state(null);
   let loading = $state(true);
@@ -65,11 +67,14 @@
 </script>
 
 {#if loading}
-  <p>Loading application...</p> {:else}
+  <p>Loading application...</p>
+{:else}
   <nav>
     <a href="/" use:active={{exact: true}}>Home</a>
-    <a href="/races" use:active>Races</a> {#if user}
+    <a href="/races" use:active>Races</a>
+    {#if user}
         <a href="/dashboard" use:active>Dashboard</a>
+        <PremiumButton />
         <button class="logout-button" onclick={handleLogout}>Logout ({user.username})</button>
     {:else if !loading}
         <a href="/login" use:active>Login/Sign Up</a>
@@ -81,7 +86,8 @@
           <HomePage />
       </Route>
 
-      <Route path="/races"> <RacesPage />
+      <Route path="/races">
+          <RacesPage />
       </Route>
 
       <Route path="/login">
@@ -103,6 +109,7 @@
       <Route path="/dashboard">
            {#if isUserLoggedIn()}
                <DashboardPage />
+               <PremiumContent />
            {/if}
       </Route>
 
@@ -123,11 +130,10 @@
     nav a:hover { text-decoration: none; color: #0056b3; }
     .logout-button { background: none; border: none; padding: 0.5rem 0; margin: 0; font: inherit; cursor: pointer; color: #dc3545; margin-left: auto; transition: color 0.2s ease-in-out; }
     .logout-button:hover { text-decoration: underline; color: #c82333; }
-    main { padding: 1rem; max-width: 1200px; margin: 0 auto; } /* Center content */
+    main { padding: 1rem; max-width: 1200px; margin: 0 auto; }
 
-     /* Styles for fallback route */
-    main h2 {
-        color: #dc3545; /* Error color */
+     main h2 {
+        color: #dc3545;
         text-align: center;
         margin-bottom: 1rem;
     }

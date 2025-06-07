@@ -1,21 +1,17 @@
 import { writable } from 'svelte/store';
-import { fetchGet } from '../utils/fetchApi.js'; // Make sure path is correct
+import { fetchGet } from '../utils/fetchApi.js';
 
-// Create writable stores for user and loading state
-export const user = writable(null); // Export store directly
-export const loading = writable(true); // Export store directly
+export const user = writable(null);
+export const loading = writable(true);
 
-// Function to check session status on app load or refresh
 async function checkSession() {
     loading.set(true);
     try {
         const data = await fetchGet('/auth/session');
         if (data.loggedIn && data.user) {
             user.set(data.user);
-            console.log("Session check: Logged in as", data.user.username);
         } else {
             user.set(null);
-            console.log("Session check: Not logged in.");
         }
     } catch (error) {
         console.error("Failed to check session:", error);
@@ -25,19 +21,14 @@ async function checkSession() {
     }
 }
 
-// Function to update user state after login/signup
 export function setUser(userData) {
     user.set(userData);
-    console.log("AuthStore: User set", userData);
 }
 
-// Function to clear user state on logout
 export function clearUser() {
     user.set(null);
-    console.log("AuthStore: User cleared");
 }
 
-// Run checkSession once when the module is first imported
 checkSession();
 
 export { checkSession };
