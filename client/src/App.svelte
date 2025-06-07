@@ -13,6 +13,8 @@
   import Toaster from './lib/components/Toaster.svelte';
   import PremiumButton from './lib/components/PremiumButton.svelte';
   import PremiumContent from './lib/components/PremiumContent.svelte';
+  import PaymentSuccessPage from './lib/pages/PaymentSuccessPage.svelte'; // <-- IMPORT THE NEW PAGE
+
 
   let user = $state(null);
   let loading = $state(true);
@@ -111,6 +113,10 @@
                <DashboardPage />
                <PremiumContent />
            {/if}
+      </Route>
+
+      <Route path="/payment-success">
+          <PaymentSuccessPage />
       </Route>
 
       <Route path="/*" fallback>
