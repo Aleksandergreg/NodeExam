@@ -4,5 +4,7 @@ CREATE TABLE users (
   email           VARCHAR(255)  UNIQUE NOT NULL,
   hashed_password VARCHAR(255)  NOT NULL,
   role            VARCHAR(20)   NOT NULL DEFAULT 'user',
-  created_at      TIMESTAMPTZ   NOT NULL DEFAULT NOW()
+  created_at      TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+  premium_status  BOOLEAN       DEFAULT FALSE,
+  premium_expiry_date DATE      DEFAULT NULL
 );
