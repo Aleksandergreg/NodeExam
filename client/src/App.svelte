@@ -97,7 +97,7 @@
       </Route>
 
       <Route path="/race/:stageId" let:meta>
-        <RaceDetailPage stageId={meta.stageId} />
+        <RaceDetailPage stageId={meta.params.stageId} />
     </Route>
 
 

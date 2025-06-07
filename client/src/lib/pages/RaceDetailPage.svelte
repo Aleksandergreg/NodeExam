@@ -8,8 +8,11 @@
     let error = $state(null);
 
     $effect(async () => {
+        console.log(`RaceDetailPage effect is running. Received stageId: '${stageId}'`);
+
         if (!stageId) {
-            return; 
+            console.log("Terminating effect because stageId is missing.");
+            return;
         }
         
         isLoading = true;
@@ -17,7 +20,6 @@
         raceDetails = null;
 
         try {
-            // THE FIX: Wrap stageId in encodeURIComponent to make it URL-safe
             const data = await fetchGet(`/api/sportradar/race/${encodeURIComponent(stageId)}`);
             
             if (data && data.stage) {
