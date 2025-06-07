@@ -14,6 +14,11 @@ import './utils/db.js';
 
 const app = express();
 
+app.use((req, res, next) => {
+    console.log(`Request Received: ${req.method} ${req.originalUrl}`);
+    next();
+  });
+
 // security + basic middleware
 app.use(helmet());
 app.use(corsMiddleware);

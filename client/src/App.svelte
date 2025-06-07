@@ -15,6 +15,8 @@
   import PremiumContent from './lib/components/PremiumContent.svelte';
   import PaymentSuccessPage from './lib/pages/PaymentSuccessPage.svelte';
   import RankingsPage from './lib/pages/RankingsPage.svelte';
+  import RaceDetailPage from './lib/pages/RaceDetailPage.svelte'; // 1. Import the new component
+
 
 
   let user = $state(null);
@@ -93,6 +95,11 @@
       <Route path="/races">
           <RacesPage />
       </Route>
+
+      <Route path="/race/:stageId" let:meta>
+        <RaceDetailPage stageId={meta.stageId} />
+    </Route>
+
 
       <Route path="/rankings">
           <RankingsPage />

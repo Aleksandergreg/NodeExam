@@ -86,7 +86,9 @@
         <ul class="results-list">
             {#each races as race (race.id)}
                 <li class="result-item">
+                    <a href="/race/{race.id}">
                     <strong>{race.description}</strong>
+                </a>
                     <p class="status">Status: {race.status}</p>
                 </li>
             {/each}
