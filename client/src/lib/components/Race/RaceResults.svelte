@@ -14,10 +14,9 @@
             const liveStages = event.stages.filter(isRaceLive);
             return liveStages.map(stage => ({
                 ...stage, 
-                description: `${event.description} - ${stage.description}` // Create the full name
+                description: `${event.description} - ${stage.description}`
             }));
         }
-        // For single-day events, the original object is fine.
         return isRaceLive(event) ? [event] : [];
     }));
 
@@ -45,7 +44,6 @@
     function isRaceLive(race) {
         if (!race || !race.scheduled) return false;
 
-        // In development mode, let's make the FIRST stage of the FIRST race always appear live for testing.
         if (import.meta.env.DEV && races.length > 0) {
             const firstEvent = races[0];
             const testStageId = firstEvent.stages && firstEvent.stages.length > 0 ? firstEvent.stages[0].id : firstEvent.id;
@@ -54,7 +52,6 @@
             }
         }
         
-        // Original production logic
         const now = new Date();
         const raceStart = new Date(race.scheduled);
         const raceEnd = new Date(raceStart.getTime() + 5 * 60 * 60 * 1000);
@@ -65,7 +62,7 @@
 </script>
 
 <style>
-    /* All styles are preserved from your correct, original version */
+    /* All styles are preserved */
     .results-container {
         max-width: 800px;
         margin: 2rem auto;
@@ -180,7 +177,6 @@
     .single-race-link { color: #5dade2; text-decoration: none; }
     .single-race-link:hover { text-decoration: underline; }
 
-    /* Live button styles */
     .live-button {
         display: inline-block;
         margin-left: 10px;
@@ -202,10 +198,12 @@
 
 <div class="results-container">
     <h2>Search Sportradar Archive by Year</h2>
-    <form class="search-form" onsubmit={fetchSchedule}>
+    
+    <form class="search-form">
         <label for="year-input">Enter Year:</label>
-        <input id="year-input" type="number" bind:value={year} min="2015" max={new Date().getFullYear()} />
-        <button type="submit" disabled={isLoading}>
+        <input id="year-input" type="number" bind:value={year} min="2007" max={new Date().getFullYear()} />
+        
+        <button type="button" onclick={fetchSchedule} disabled={isLoading}>
             {#if isLoading}Searching...{:else}Search Schedule{/if}
         </button>
     </form>
