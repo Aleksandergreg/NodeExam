@@ -1,70 +1,160 @@
 <script>
     import { onMount } from 'svelte';
-    import { fetchGet } from '../../utils/fetchApi';
-    import { toast } from 'svelte-5-french-toast';
+    import { fetchGet } from '../../utils/fetchApi.js';
 
-    let racesByYear = $state({});
-    let isLoading = $state(true);
-    let selectedYear = $state(new Date().getFullYear());
-    let expandedRaceId = $state(null); 
+    // --- State Management (using Svelte 5 runes) ---
+    let year = $state(new Date().getFullYear());
+    let races = $state([]);
+    let isLoading = $state(false);
+    let error = $state(null);
+    let searchedYear = $state(null);
+    let activeRaceId = $state(null);
 
-    async function fetchRaces(year) {
+    function toggleRace(raceId) {
+        activeRaceId = activeRaceId === raceId ? null : raceId;
+    }
+
+    async function fetchSchedule() {
         isLoading = true;
+        error = null;
+        races = [];
+        searchedYear = year;
+        activeRaceId = null; 
+
         try {
             const data = await fetchGet(`/api/sportradar/schedule/${year}`);
-            racesByYear[year] = data.races;
-        } catch (error) {
-            toast.error(error.data?.message || `Failed to load races for ${year}.`);
-            racesByYear[year] = [];
+            races = data.races || [];
+        } catch (err) {
+            error = err.data?.message || 'An error occurred.';
         } finally {
             isLoading = false;
         }
     }
 
+    // --- Live Commentary Logic ---
     function isRaceLive(race) {
+        if (!race || !race.scheduled) return false;
         const now = new Date();
         const raceStart = new Date(race.scheduled);
+        // A race is considered "live" from its start time until 5 hours later
         const raceEnd = new Date(raceStart.getTime() + 5 * 60 * 60 * 1000);
         return raceStart <= now && now <= raceEnd;
     }
 
-    function toggleRace(raceId) {
-        expandedRaceId = expandedRaceId === raceId ? null : raceId;
-    }
-
-    onMount(() => {
-        fetchRaces(selectedYear);
-    });
-
-    $effect(() => {
-        if (selectedYear && !racesByYear[selectedYear]) {
-            fetchRaces(selectedYear);
-        }
-    });
+    onMount(fetchSchedule);
 </script>
 
 <style>
-    .sportradar-container h1 { text-align: center; }
-    .year-selector { margin-bottom: 2rem; text-align: center; }
-    .race-category { margin-bottom: 1.5rem; }
-    .race-header-button {
-        background-color: #f0f0f0;
-        padding: 1rem;
+    /* All styles are preserved from your correct, original version */
+    .results-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #2c3e50;
+        border-radius: 12px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    .results-container h2,
+    .results-container > h3 {
+        text-align: center;
+        color: #ecf0f1;
+        margin-top: 0;
+        margin-bottom: 2rem;
+        font-weight: 600;
+    }
+    .search-form {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2.5rem;
+    }
+    .search-form label {
+        font-size: 1rem;
+        color: #bdc3c7; 
+    }
+    .search-form input {
+        padding: 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #7f8c8d;
+        background-color: #34495e;
+        color: #ecf0f1;
+        font-size: 1rem;
+        width: 100px;
+    }
+    .search-form button {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #fff;
+        background-color: #3498db;
+        border: none;
+        border-radius: 6px;
         cursor: pointer;
-        border-radius: 5px;
-        font-weight: bold;
-        width: 100%;
-        text-align: left;
-        border: 1px solid #ddd;
-        font-size: 1em;
-        color: #333;
+        transition: background-color 0.2s ease;
     }
-    .race-stages {
-        padding: 0.5rem 0 0.5rem 1.5rem;
-        margin-top: 0.5rem;
-        border-left: 2px solid #ccc;
+    .search-form button:hover:not(:disabled) {
+        background-color: #2980b9;
     }
-    .stage-item { margin-bottom: 0.5rem; }
+    .search-form button:disabled {
+        background-color: #576574;
+        cursor: not-allowed;
+    }
+    .error-message {
+        color: #e74c3c;
+        text-align: center;
+        font-size: 1.1rem;
+    }
+    .event-list { list-style-type: none; padding: 0; }
+    .event-item {
+        background-color: #34495e;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+    .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+    .event-header:hover { background-color: #4a627a; }
+    .event-header h3 {
+        margin: 0;
+        color: #ecf0f1;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+    .event-header::after {
+        content: '+';
+        font-size: 1.75rem;
+        font-weight: 300;
+        color: #95a5a6;
+        transition: transform 0.3s ease;
+    }
+    .event-header.active::after { transform: rotate(45deg); }
+    .stages-container {
+        padding: 0 1.5rem 1rem;
+        border-top: 1px solid #4a627a;
+    }
+    .stage-list {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 1rem;
+    }
+    .stage-item { padding: 0.75rem 0.5rem; border-bottom: 1px solid #4a627a; }
+    .stage-item:last-child { border-bottom: none; }
+    .stage-item a {
+        color: #5dade2;
+        text-decoration: none;
+    }
+    .stage-item a:hover { text-decoration: underline; }
+    .single-race-link { color: #5dade2; text-decoration: none; }
+    .single-race-link:hover { text-decoration: underline; }
+
+    /* Live button styles */
     .live-button {
         display: inline-block;
         margin-left: 10px;
@@ -75,6 +165,7 @@
         border-radius: 5px;
         font-weight: bold;
         animation: pulse 1.5s infinite;
+        font-size: 0.9em;
     }
     @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
@@ -83,40 +174,67 @@
     }
 </style>
 
-<div class="sportradar-container">
-    <h1>Live Race Data from Sportradar</h1>
-    <div class="year-selector">
-        <label for="year">Select Year: </label>
-        <select id="year" bind:value={selectedYear}>
-            <option value={2025}>2025</option>
-            <option value={2024}>2024</option>
-            <option value={2023}>2023</option>
-        </select>
-    </div>
+<div class="results-container">
+    <h2>Search Sportradar Archive by Year</h2>
+    <form class="search-form" onsubmit={fetchSchedule}>
+        <label for="year-input">Enter Year:</label>
+        <input id="year-input" type="number" bind:value={year} min="2015" max={new Date().getFullYear()} />
+        <button type="submit" disabled={isLoading}>
+            {#if isLoading}Searching...{:else}Search Schedule{/if}
+        </button>
+    </form>
 
     {#if isLoading}
-        <p>Loading races for {selectedYear}...</p>
-    {:else if racesByYear[selectedYear]?.length > 0}
-        {#each racesByYear[selectedYear] as raceCategory (raceCategory.id)}
-            <div class="race-category">
-                <button class="race-header-button" onclick={() => toggleRace(raceCategory.id)}>
-                    {raceCategory.description}
-                </button>
-                {#if expandedRaceId === raceCategory.id}
-                    <div class="race-stages">
-                        {#each raceCategory.stages as stage (stage.id)}
-                            <div class="stage-item">
-                                <a href={`/race/${stage.id}`}>{stage.description}</a>
-                                {#if isRaceLive(stage)}
-                                    <a href={`/race/live/${stage.id}`} class="live-button">🔴 Live</a>
-                                {/if}
-                            </div>
-                        {/each}
+        <p>Loading schedule for {searchedYear}...</p>
+    {:else if error}
+        <p class="error-message">{error}</p>
+    {:else if races.length > 0}
+        <h3>Race Schedule for {searchedYear}</h3>
+        <ul class="event-list">
+            {#each races as event (event.id)}
+                <li class="event-item">
+                    <div class="event-header"
+                         class:active={activeRaceId === event.id} 
+                         onclick={() => toggleRace(event.id)} 
+                         onkeydown={(e) => e.key === 'Enter' && toggleRace(event.id)} 
+                         role="button" 
+                         tabindex="0">
+                        <h3>
+                            {event.description}
+                            {#if (!event.stages || event.stages.length === 0) && isRaceLive(event)}
+                                <a href={`/race/live/${event.id}`} class="live-button" onclick={(e) => e.stopPropagation()}>🔴 Live</a>
+                            {/if}
+                        </h3>
                     </div>
-                {/if}
-            </div>
-        {/each}
-    {:else}
-        <p>No races found for {selectedYear}.</p>
+                    
+                    {#if activeRaceId === event.id}
+                        <div class="stages-container">
+                            {#if event.stages && event.stages.length > 0}
+                                <ul class="stage-list">
+                                    {#each event.stages as stage (stage.id)}
+                                        <li class="stage-item">
+                                            <a href="/race/{stage.id}">
+                                                {stage.description}
+                                            </a>
+                                            {#if isRaceLive(stage)}
+                                                <a href={`/race/live/${stage.id}`} class="live-button">🔴 Live</a>
+                                            {/if}
+                                            <span style="color: #95a5a6; margin-left: 1rem;">(Status: {stage.status})</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            {:else}
+                                <p style="padding-top: 1rem; color: #bdc3c7;">
+                                    This is a single-day event.
+                                    <a href="/race/{event.id}" class="single-race-link" style="margin-left: 0.5rem;">View Details</a>
+                                </p>
+                            {/if}
+                        </div>
+                    {/if}
+                </li>
+            {/each}
+        </ul>
+    {:else if searchedYear}
+        <p>No race schedule found for {searchedYear}.</p>
     {/if}
 </div>

@@ -69,7 +69,7 @@
         <div class="info-item">
           <h4>Status</h4>
   
-          <p>{raceDetails.status}</p>
+          <p>{raceDetails.status ? raceDetails.status : 'Not raced yet' }</p>
         </div>
   
         <div class="info-item">
