@@ -9,6 +9,18 @@
     let searchedYear = $state(null);
     let activeRaceId = $state(null);
 
+    let liveRaces = $derived((races || []).flatMap(event => {
+        if (event.stages && event.stages.length > 0) {
+            const liveStages = event.stages.filter(isRaceLive);
+            return liveStages.map(stage => ({
+                ...stage, 
+                description: `${event.description} - ${stage.description}` // Create the full name
+            }));
+        }
+        // For single-day events, the original object is fine.
+        return isRaceLive(event) ? [event] : [];
+    }));
+
     function toggleRace(raceId) {
         activeRaceId = activeRaceId === raceId ? null : raceId;
     }
@@ -68,6 +80,12 @@
         color: #ecf0f1;
         margin-top: 0;
         margin-bottom: 2rem;
+        font-weight: 600;
+    }
+    .live-races-section h3 {
+        text-align: center;
+        color: #ecf0f1;
+        margin-bottom: 1.5rem;
         font-weight: 600;
     }
     .search-form {
@@ -192,6 +210,24 @@
         </button>
     </form>
 
+    {#if !isLoading && liveRaces.length > 0}
+        <div class="live-races-section">
+            <h3>🔴 Live Races</h3>
+            <ul class="event-list">
+                {#each liveRaces as race (race.id)}
+                    <li class="event-item">
+                        <div class="event-header" style="cursor: default;">
+                            <h3 style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span>{race.description}</span>
+                                <a href={`/race/live/${race.id}`} class="live-button">View Live Commentary</a>
+                            </h3>
+                        </div>
+                    </li>
+                {/each}
+            </ul>
+        </div>
+    {/if}
+
     {#if isLoading}
         <p>Loading schedule for {searchedYear}...</p>
     {:else if error}
@@ -227,7 +263,7 @@
                                             {#if isRaceLive(stage)}
                                                 <a href={`/race/live/${stage.id}`} class="live-button">🔴 Live</a>
                                             {/if}
-                                            <span style="color: #95a5a6; margin-left: 1rem;">(Status: {stage.status})</span>
+                                            <span style="color: #95a5a6; margin-left: 1rem;">(Status: {stage.status ? stage.status : 'Not raced yet'})</span>
                                         </li>
                                     {/each}
                                 </ul>
