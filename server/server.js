@@ -1,8 +1,9 @@
 import 'dotenv/config';
-import app from './app.js';
+import server from './app.js'; 
 
 const PORT = Number(process.env.PORT) || 8080;
-app.listen(PORT, (err) => {
+
+server.listen(PORT, (err) => { 
   if (err) {
     console.error('Failed to start server:', err);
     process.exit(1);

@@ -6,7 +6,7 @@
     let racesByYear = $state({});
     let isLoading = $state(true);
     let selectedYear = $state(new Date().getFullYear());
-    let expandedRaceId = $state(null); // To control which race is expanded
+    let expandedRaceId = $state(null); 
 
     async function fetchRaces(year) {
         isLoading = true;
@@ -29,11 +29,7 @@
     }
 
     function toggleRace(raceId) {
-        if (expandedRaceId === raceId) {
-            expandedRaceId = null;
-        } else {
-            expandedRaceId = raceId;
-        }
+        expandedRaceId = expandedRaceId === raceId ? null : raceId;
     }
 
     onMount(() => {
@@ -51,15 +47,20 @@
     .sportradar-container h1 { text-align: center; }
     .year-selector { margin-bottom: 2rem; text-align: center; }
     .race-category { margin-bottom: 1.5rem; }
-    .race-header {
+    .race-header-button {
         background-color: #f0f0f0;
         padding: 1rem;
         cursor: pointer;
         border-radius: 5px;
         font-weight: bold;
+        width: 100%;
+        text-align: left;
+        border: 1px solid #ddd;
+        font-size: 1em;
+        color: #333;
     }
     .race-stages {
-        padding-left: 1.5rem;
+        padding: 0.5rem 0 0.5rem 1.5rem;
         margin-top: 0.5rem;
         border-left: 2px solid #ccc;
     }
@@ -95,12 +96,12 @@
 
     {#if isLoading}
         <p>Loading races for {selectedYear}...</p>
-    {:else if racesByYear[selectedYear] && racesByYear[selectedYear].length > 0}
+    {:else if racesByYear[selectedYear]?.length > 0}
         {#each racesByYear[selectedYear] as raceCategory (raceCategory.id)}
             <div class="race-category">
-                <div class="race-header" on:click={() => toggleRace(raceCategory.id)}>
+                <button class="race-header-button" onclick={() => toggleRace(raceCategory.id)}>
                     {raceCategory.description}
-                </div>
+                </button>
                 {#if expandedRaceId === raceCategory.id}
                     <div class="race-stages">
                         {#each raceCategory.stages as stage (stage.id)}
