@@ -4,7 +4,7 @@ import { query } from '../utils/db.js';
 
 const router = Router();
 
-// Route for an admin to post a new comment
+
 router.post('/commentary/:raceId', isAuthenticated, isAdmin, async (req, res, next) => {
     const { raceId } = req.params;
     const { comment } = req.body;
@@ -23,7 +23,7 @@ router.post('/commentary/:raceId', isAuthenticated, isAdmin, async (req, res, ne
         const { rows } = await query(sql, [raceId, userId, username, comment.trim()]);
         const newComment = rows[0];
 
-        const io = req.app.get('socketio'); // Access the io instance
+        const io = req.app.get('socketio');
         io.to(raceId).emit('new_commentary_update', newComment);
 
         res.status(201).send(newComment);
@@ -32,6 +32,7 @@ router.post('/commentary/:raceId', isAuthenticated, isAdmin, async (req, res, ne
         next(error);
     }
 });
+
 
 router.get('/commentary/:raceId', isAuthenticated, async (req, res, next) => {
     const { raceId } = req.params;
@@ -46,4 +47,3 @@ router.get('/commentary/:raceId', isAuthenticated, async (req, res, next) => {
 });
 
 export default router;
-

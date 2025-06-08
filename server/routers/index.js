@@ -8,10 +8,12 @@ import commentaryRouter from './commentaryRouter.js';
 
 
 const router = Router();
+
 router.use(authRouter);
 router.use(protectedRouter);
 router.use(racesRouter);
 router.use(sportradarRouter);
 router.use(adminRouter); 
 router.use(commentaryRouter);
+
 export default router;

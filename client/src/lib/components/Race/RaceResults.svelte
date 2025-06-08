@@ -2,7 +2,6 @@
     import { onMount } from 'svelte';
     import { fetchGet } from '../../utils/fetchApi.js';
 
-    // --- State Management (using Svelte 5 runes) ---
     let year = $state(new Date().getFullYear());
     let races = $state([]);
     let isLoading = $state(false);
@@ -31,12 +30,21 @@
         }
     }
 
-    // --- Live Commentary Logic ---
     function isRaceLive(race) {
         if (!race || !race.scheduled) return false;
+
+        // In development mode, let's make the FIRST stage of the FIRST race always appear live for testing.
+        if (import.meta.env.DEV && races.length > 0) {
+            const firstEvent = races[0];
+            const testStageId = firstEvent.stages && firstEvent.stages.length > 0 ? firstEvent.stages[0].id : firstEvent.id;
+            if (race.id === testStageId) {
+                return true;
+            }
+        }
+        
+        // Original production logic
         const now = new Date();
         const raceStart = new Date(race.scheduled);
-        // A race is considered "live" from its start time until 5 hours later
         const raceEnd = new Date(raceStart.getTime() + 5 * 60 * 60 * 1000);
         return raceStart <= now && now <= raceEnd;
     }

@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { fetchGet, fetchPut } from '../utils/fetchApi';
+    import { fetchGet, fetchPut } from '../../utils/fetchApi';
     import { toast } from 'svelte-5-french-toast';
 
     let users = $state([]);
