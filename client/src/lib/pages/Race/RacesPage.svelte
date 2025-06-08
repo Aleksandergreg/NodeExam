@@ -1,5 +1,4 @@
 <script>
-    import { onMount } from 'svelte';
     import { fetchGet } from '../../utils/fetchApi';
     import RaceCard from '../../components/Race/RaceCard.svelte';
 

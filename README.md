@@ -2,7 +2,7 @@
 
 ## Live cycling blog and auth system
 
-**A live cycling blow and authentication and authorization system build with Node.js with Express backend utilizing a PostgreSQL database and a Svelte5 frontend**
+**A live cycling blog and authentication and authorization system build with Node.js with Express backend utilizing a PostgreSQL database and a Svelte5 frontend**
 
 ## Prerequisites
 
