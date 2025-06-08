@@ -70,7 +70,7 @@
         <p>Loading commentary...</p>
     {:else}
         <ul class="commentary-list">
-            {#each comments as comment (comment.id)}
+            {#each comments.slice().reverse() as comment (comment.id)}
                 <li class="commentary-item">
                     <div class="comment-meta">
                         <strong>{comment.username}</strong> at {new Date(comment.created_at).toLocaleTimeString()}
