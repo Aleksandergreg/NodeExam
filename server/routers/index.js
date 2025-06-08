@@ -4,6 +4,7 @@ import protectedRouter from './protectedRouter.js';
 import racesRouter from './racesRouter.js';
 import sportradarRouter from './sportradarRouter.js'; 
 import adminRouter from './adminRouter.js';
+import commentaryRouter from './commentaryRouter.js';
 
 
 const router = Router();
@@ -12,4 +13,5 @@ router.use(protectedRouter);
 router.use(racesRouter);
 router.use(sportradarRouter);
 router.use(adminRouter); 
+router.use(commentaryRouter);
 export default router;
