@@ -7,7 +7,7 @@ import sessionMiddleware from './config/session.js';
 import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
 import { notFound, errorHandler } from './middleware/errorHandlers.js';
 
-import stripeRouter from './routers/stripeRouter.js'; // Import stripeRouter
+import stripeRouter from './routers/stripeRouter.js'; 
 import routers from './routers/index.js';
 
 import './utils/db.js';

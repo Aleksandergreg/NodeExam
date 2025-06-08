@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^7.3.1",
+    "socket.io-client": "^4.8.1",
     "svelte-5-french-toast": "^2.0.4",
     "svelte-spa-router": "^4.0.1",
     "tinro": "^0.6.12"
