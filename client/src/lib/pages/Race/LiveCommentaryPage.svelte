@@ -1,6 +1,5 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
-    import { router } from 'tinro';
+    import { onMount } from 'svelte';
     import io from 'socket.io-client';
     import { fetchGet, fetchPost } from '../../utils/fetchApi.js';
     import { user as userStore } from '../../stores/authStore.js';
@@ -56,6 +55,15 @@
     .comment-meta { font-size: 0.85rem; color: #666; margin-bottom: 0.5rem; }
     .comment-meta strong { color: #333; }
     .comment-body { font-size: 1rem; color: #222; }
+
+    .kms-to-go {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
 </style>
 
 <div class="commentary-container">
@@ -72,6 +80,11 @@
         <ul class="commentary-list">
             {#each comments.slice().reverse() as comment (comment.id)}
                 <li class="commentary-item">
+                    
+                    {#if comment.kms_to_go !== null && comment.kms_to_go >= 0}
+                        <h4 class="kms-to-go">{comment.kms_to_go} km to go</h4>
+                    {/if}
+
                     <div class="comment-meta">
                         <strong>{comment.username}</strong> at {new Date(comment.created_at).toLocaleTimeString()}
                     </div>
