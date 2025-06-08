@@ -1,6 +1,6 @@
 <script>
-    import { user, loading } from '../stores/authStore.js'; 
-    import { fetchGet } from '../utils/fetchApi.js'; 
+    import { user, loading } from '../../stores/authStore.js'; 
+    import { fetchGet } from '../../utils/fetchApi.js'; 
     import { toast } from 'svelte-5-french-toast';
     import { onMount } from 'svelte';
 

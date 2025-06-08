@@ -1,5 +1,5 @@
 <script>
-    import { fetchGet } from '../utils/fetchApi.js';
+    import { fetchGet } from '../../utils/fetchApi.js';
 
     let { stageId } = $props();
 

@@ -1,9 +1,9 @@
 <script>
     import { onMount } from 'svelte';
-    import { fetchGet } from '../utils/fetchApi';
-    import RaceCard from '../components/RaceCard.svelte';
+    import { fetchGet } from '../../utils/fetchApi';
+    import RaceCard from '../../components/Race/RaceCard.svelte';
 
-    import RaceResults from '../components/RaceResults.svelte';
+    import RaceResults from '../../components/Race/RaceResults.svelte';
 
     let searchTerm = '';
     let results = [];

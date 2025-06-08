@@ -4,18 +4,18 @@
 
   import { user as userStore, loading as loadingStore, clearUser, checkSession } from './lib/stores/authStore.js';
   import { fetchPost } from './lib/utils/fetchApi.js';
-  import HomePage from './lib/pages/HomePage.svelte';
-  import LoginPage from './lib/pages/LoginPage.svelte';
-  import DashboardPage from './lib/pages/DashboardPage.svelte';
-  import RequestPasswordResetPage from './lib/pages/RequestPasswordResetPage.svelte';
-  import ResetPasswordPage from './lib/pages/ResetPasswordPage.svelte';
-  import RacesPage from './lib/pages/RacesPage.svelte';
-  import Toaster from './lib/components/Toaster.svelte';
-  import PremiumButton from './lib/components/PremiumButton.svelte';
-  import PremiumContent from './lib/components/PremiumContent.svelte';
-  import PaymentSuccessPage from './lib/pages/PaymentSuccessPage.svelte';
-  import RankingsPage from './lib/pages/RankingsPage.svelte';
-  import RaceDetailPage from './lib/pages/RaceDetailPage.svelte'; // 1. Import the new component
+  import HomePage from './lib/pages/Homepage/HomePage.svelte';
+  import LoginPage from './lib/pages/LoginPage/LoginPage.svelte';
+  import DashboardPage from './lib/pages/DashboardPage/DashboardPage.svelte';
+  import RequestPasswordResetPage from './lib/pages/Auth/RequestPasswordResetPage.svelte';
+  import ResetPasswordPage from './lib/pages/Auth/ResetPasswordPage.svelte';
+  import RacesPage from './lib/pages/Race/RacesPage.svelte';
+  import Toaster from './lib/components/Toaster/Toaster.svelte';
+  import PremiumButton from './lib/components/Premium/PremiumButton.svelte';
+  import PremiumContent from './lib/components/Premium/PremiumContent.svelte';
+  import PaymentSuccessPage from './lib/pages/PaymentSuccessPage/PaymentSuccessPage.svelte';
+  import RankingsPage from './lib/pages/Race/RankingsPage.svelte';
+  import RaceDetailPage from './lib/pages/Race/RaceDetailPage.svelte'; // 1. Import the new component
 
 
 

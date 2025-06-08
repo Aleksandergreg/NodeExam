@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { fetchGet } from '../utils/fetchApi.js';
+    import { fetchGet } from '../../utils/fetchApi.js';
 
     let rankings = [];
     let isLoading = true;

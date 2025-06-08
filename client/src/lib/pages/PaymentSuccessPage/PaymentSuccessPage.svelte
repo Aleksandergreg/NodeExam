@@ -1,6 +1,6 @@
 <script>
     import { router as tinroRouter } from 'tinro';
-    import { checkSession } from '../stores/authStore.js'; // Import the checkSession function
+    import { checkSession } from '../../stores/authStore.js'; // Import the checkSession function
 
     // Using Svelte 5's $effect to run code when the component is created
     $effect(() => {

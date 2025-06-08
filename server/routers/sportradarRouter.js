@@ -76,7 +76,6 @@ router.get('/api/sportradar/race/:stageId', async (req, res, next) => {
     try {
         const url = `${SPORTRADAR_BASE_URL}/sport_events/${stageId}/summary.json?api_key=${API_KEY}`;
         
-        console.log(`Requesting URL from Sportradar: ${url}`);
         
         const response = await axios.get(url);
         

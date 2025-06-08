@@ -1,9 +1,9 @@
 <script>
     import { toast } from 'svelte-5-french-toast';
-    import { setUser } from '../stores/authStore.js';
-    import { fetchPost } from '../utils/fetchApi.js';
+    import { setUser } from '../../stores/authStore.js';
+    import { fetchPost } from '../../utils/fetchApi.js';
     import { router as tinroRouter } from 'tinro';
-    import '../styles/authForm.css';
+    import '../../styles/authForm.css'
 
     // --- Component State ---
     let isLoginView = $state(true);

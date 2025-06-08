@@ -1,6 +1,6 @@
 <script>
-    import { fetchPost } from '../utils/fetchApi.js';
-    import { user } from '../stores/authStore.js';
+    import { fetchPost } from '../../utils/fetchApi.js';
+    import { user } from '../../stores/authStore.js';
     import { loadStripe } from '@stripe/stripe-js';
 
     let stripe;

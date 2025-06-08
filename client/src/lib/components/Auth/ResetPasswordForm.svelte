@@ -1,8 +1,8 @@
 <script>
     import { toast } from 'svelte-5-french-toast';
-    import { fetchPost } from '../utils/fetchApi.js';
+    import { fetchPost } from '../../utils/fetchApi.js';
     import { router as tinroRouter } from 'tinro'; 
-    import '../styles/authForm.css';
+    import '../../styles/authForm.css'
 
     let newPassword = $state('');
     let confirmPassword = $state('');

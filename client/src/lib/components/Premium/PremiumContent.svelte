@@ -1,5 +1,5 @@
 <script>
-    import { user } from '../stores/authStore.js';
+    import { user } from '../../stores/authStore.js';
 </script>
 
 {#if $user && $user.premium_status}
