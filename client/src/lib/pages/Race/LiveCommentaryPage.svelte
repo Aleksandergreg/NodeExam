@@ -78,7 +78,7 @@
         <p>Loading commentary...</p>
     {:else}
         <ul class="commentary-list">
-            {#each comments.slice().reverse() as comment (comment.id)}
+            {#each comments.toReversed() as comment (comment.id)}
                 <li class="commentary-item">
                     
                     {#if comment.kms_to_go !== null && comment.kms_to_go >= 0}
