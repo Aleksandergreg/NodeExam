@@ -5,6 +5,8 @@ import racesRouter from './racesRouter.js';
 import sportradarRouter from './sportradarRouter.js'; 
 import adminRouter from './adminRouter.js';
 import commentaryRouter from './commentaryRouter.js';
+import weatherRouter from './weatherRouter.js'; 
+
 
 
 const router = Router();
@@ -13,6 +15,7 @@ router.use(authRouter);
 router.use(protectedRouter);
 router.use(racesRouter);
 router.use(sportradarRouter);
+router.use(weatherRouter);
 router.use(commentaryRouter);
 router.use(adminRouter); 
 

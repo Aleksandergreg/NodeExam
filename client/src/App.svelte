@@ -121,7 +121,6 @@
 {/if}
 
 <style>
-    /* Styles from your existing App.svelte */
     nav { display: flex; gap: 1rem; padding: 1rem; background-color: #f8f9fa; margin-bottom: 1rem; align-items: center; color: #343a40; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     nav a { color: #007bff; text-decoration: none; padding: 0.5rem 0; transition: color 0.2s ease-in-out, border-bottom 0.2s ease-in-out; }
     nav a:hover { text-decoration: none; color: #0056b3; }
@@ -129,5 +128,4 @@
     .logout-button:hover { text-decoration: underline; color: #c82333; }
     main { padding: 1rem; max-width: 1200px; margin: 0 auto; }
     main h2 { color: #dc3545; text-align: center; margin-bottom: 1rem; }
-    main p { text-align: center; margin-bottom: 1rem; }
     main a { display: block; text-align: center; color: #007bff; }</style>
