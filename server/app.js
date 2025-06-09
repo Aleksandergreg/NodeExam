@@ -10,7 +10,7 @@ import { generalLimiter, authLimiter } from './middleware/rateLimiter.js';
 import { notFound, errorHandler } from './middleware/errorHandlers.js';
 
 import stripeRouter from './routers/stripeRouter.js';
-import commentaryRouter from './routers/commentaryRouter.js';
+// import commentaryRouter from './routers/commentaryRouter.js';
 import routers from './routers/index.js';
 import { initializeSocketIO } from './sockets/commentarySocket.js'; 
 
@@ -45,7 +45,7 @@ app.use('/auth', authLimiter);
 
 // Routers
 app.use(routers);
-app.use(commentaryRouter);
+// app.use(commentaryRouter);
 
 // Initialize socket logic
 initializeSocketIO(io);
