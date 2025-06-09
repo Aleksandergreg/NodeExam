@@ -14,6 +14,8 @@
     let isLoading = $state(false);
     let errorMessage = $state('');
 
+    const siteKey = "6LcGyForAAAAABZYBRSt49vSjwfEFL6ASo5YbMeK";
+
     function toggleView() {
         isLoginView = !isLoginView;
         errorMessage = '';
@@ -21,28 +23,46 @@
         password = '';
         username = '';
         confirmPassword = '';
+        grecaptcha.reset();
     }
 
     async function handleLogin(event) {
         event.preventDefault();
+        
+        const captchaToken = grecaptcha.getResponse();
+        if (!captchaToken) {
+            errorMessage = "Please complete the CAPTCHA.";
+            toast.error(errorMessage);
+            return;
+        }
+
         isLoading = true;
         errorMessage = '';
         try {
-            const data = await fetchPost('/auth/login', { email, password });
+            const data = await fetchPost('/auth/login', { email, password, captchaToken });
             setUser(data.user);
             toast.success(data.message || 'Login successful!');
             tinroRouter.goto('/dashboard', { replace: true });
         } catch (error) {
             console.error("Login failed:", error);
-             errorMessage = error.data?.message || error.message || 'Login failed. Please check your credentials.';
+            errorMessage = error.data?.message || error.message || 'Login failed. Please check your credentials.';
             toast.error(errorMessage);
         } finally {
             isLoading = false;
+            grecaptcha.reset();
         }
     }
 
      async function handleSignup(event) {
-         event.preventDefault();
+        event.preventDefault();
+        
+        const captchaToken = grecaptcha.getResponse();
+        if (!captchaToken) {
+            errorMessage = "Please complete the CAPTCHA.";
+            toast.error(errorMessage);
+            return;
+        }
+
          if (password !== confirmPassword) {
              errorMessage = "Passwords do not match.";
              toast.error(errorMessage);
@@ -51,19 +71,19 @@
          isLoading = true;
          errorMessage = '';
          try {
-             const data = await fetchPost('/auth/signup', { username, email, password });
+             const data = await fetchPost('/auth/signup', { username, email, password, captchaToken });
              setUser(data.user);
              toast.success(data.message || 'Signup successful! Welcome!');
              tinroRouter.goto('/dashboard', { replace: true });
          } catch (error) {
              console.error("Signup failed:", error);
-              errorMessage = error.data?.message || error.message || 'Signup failed. Please try again.';
+             errorMessage = error.data?.message || error.message || 'Signup failed. Please try again.';
              toast.error(errorMessage);
          } finally {
              isLoading = false;
+             grecaptcha.reset();
          }
      }
-
 </script>
 
 <div class="auth-container">
@@ -74,6 +94,9 @@
                 <input type="email" name="email" placeholder="Email" required bind:value={email} disabled={isLoading}>
                 <input type="password" name="pswd" placeholder="Password (min 8 chars)" required bind:value={password} disabled={isLoading}>
                 <input type="password" name="confirmPswd" placeholder="Confirm Password" required bind:value={confirmPassword} disabled={isLoading}>
+                
+                <div class="g-recaptcha" data-sitekey={siteKey}></div>
+
                 {#if errorMessage && !isLoginView}
                     <div class="error-message">{errorMessage}</div>
                 {/if}
@@ -87,6 +110,9 @@
              <form onsubmit={handleLogin}>
                 <input type="email" name="email" placeholder="Email" required bind:value={email} disabled={isLoading}>
                 <input type="password" name="pswd" placeholder="Password" required bind:value={password} disabled={isLoading}>
+
+                <div class="g-recaptcha" data-sitekey={siteKey}></div>
+
                 {#if errorMessage && isLoginView}
                     <div class="error-message">{errorMessage}</div>
                 {/if}
@@ -103,6 +129,13 @@
 </div>
 
 <style>
+    /* Add a little margin for the CAPTCHA widget */
+    .g-recaptcha {
+        margin: 15px auto;
+        /* The widget is 304px wide, this centers it */
+        width: 304px; 
+    }
+
     /* Add styles for the forgot password link */
     .forgot-password-link {
         text-align: right;
