@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
+import axios from 'axios';
 import crypto from 'crypto';
 import stripe from 'stripe';
 import {
@@ -14,8 +15,32 @@ const saltRounds = 12;
 const passwordResetTokenExpiryHours = 1;
 const stripeClient = stripe(process.env.STRIPE_SECRET_KEY);
 
+async function verifyRecaptcha(req, res, next) {
+    const { captchaToken } = req.body;
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
-router.post('/auth/signup', async (req, res, next) => {
+    if (!captchaToken) {
+        return res.status(400).send({ message: 'CAPTCHA token is missing.' });
+    }
+
+    const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`;
+
+    try {
+        const { data } = await axios.post(verificationUrl);
+        if (data.success) {
+            return next(); // CAPTCHA was successful, proceed to the next middleware (the signup/login logic)
+        } else {
+            return res.status(400).send({ message: 'Failed CAPTCHA verification.' });
+        }
+    } catch (error) {
+        console.error("reCAPTCHA verification error:", error);
+        return res.status(500).send({ message: 'Error verifying CAPTCHA.' });
+    }
+}
+
+
+
+router.post('/auth/signup', verifyRecaptcha, async (req, res, next) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
@@ -71,7 +96,7 @@ router.post('/auth/signup', async (req, res, next) => {
     }
 });
 
-router.post('/auth/login', async (req, res, next) => {
+router.post('/auth/login', verifyRecaptcha, async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
