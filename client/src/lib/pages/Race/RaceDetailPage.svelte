@@ -1,4 +1,5 @@
 <script>
+  import '../../styles/RaceDetailPage.css';
   import { fetchGet } from "../../utils/fetchApi.js";
   import WeatherWidget from '../../components/Race/WeatherWidget.svelte'; 
 
@@ -11,15 +12,9 @@
   let error = $state(null);
 
   $effect(async () => {
-    console.log(
-      `RaceDetailPage effect is running. Received stageId: '${stageId}'`
-    );
-
     if (!stageId) {
-      console.log("Terminating effect because stageId is missing.");
       return;
     }
-
     isLoading = true;
     error = null;
     raceDetails = null;
@@ -51,6 +46,7 @@
     }
   });
 </script>
+
 <div class="race-detail-page">
   {#if isLoading}
     <p>Loading race details...</p>
@@ -90,14 +86,15 @@
 
     {#if raceDetails.competitors && raceDetails.competitors.length > 0}
       <h3>Competitors & Results</h3>
-      <ul class="card competitor-list">
-        {#each raceDetails.competitors as competitor (competitor.id)}
+      <ol class="card competitor-list">
+        {#each raceDetails.competitors as competitor, i (competitor.id)}
           <li class="competitor-item">
+            <span class="rank">{i + 1}.</span>
             <span class="competitor-name">{competitor.name} ({competitor.nationality})</span>
-            <span>Time: {competitor.result?.time || "N/A"}</span>
+            <span class="time">Time: {competitor.result?.time || "N/A"}</span>
           </li>
         {/each}
-      </ul>
+      </ol>
     {/if}
   {/if}
 </div>

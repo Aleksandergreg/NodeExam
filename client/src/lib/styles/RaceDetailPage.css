@@ -82,3 +82,22 @@
     color: var(--error-color);
     text-align: center;
 }
+.competitor-item .rank {
+    font-weight: 600;
+    color: var(--text-color);
+    width: 2ch; /* a width of 2 characters */
+    text-align: right;
+}
+
+/* Allow the name to take up remaining space */
+.competitor-item .competitor-name {
+    font-weight: 500;
+    color: var(--text-color); 
+    flex-grow: 1; /* This makes it push the time to the right */
+}
+
+/* Style for the time, which now sits on the right */
+.competitor-item .time {
+    font-size: 0.9rem;
+    white-space: nowrap; /* Prevent time from wrapping */
+}

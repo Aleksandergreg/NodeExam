@@ -4,7 +4,7 @@
     import { fetchPost } from '../../utils/fetchApi.js';
     import { router as tinroRouter } from 'tinro';
     import { onMount } from 'svelte'; 
-    import '../../styles/authForm.css'
+    import '../../styles/authForm.css';
 
     let isLoginView = $state(true);
     let email = $state('');
@@ -16,13 +16,17 @@
 
     const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LcGyForAAAAABZYBRSt49vSjwfEFL6ASo5YbMeK"; 
 
-    let recaptchaWidgetContainer; 
+    let recaptchaContainerEl = $state(); 
+    let recaptchaId = null;
 
     const renderRecaptcha = () => {
-        if (recaptchaWidgetContainer && typeof window.grecaptcha?.render === 'function') {
+        if (recaptchaContainerEl && typeof window.grecaptcha?.render === 'function') {
             try {
-                window.grecaptcha.render(recaptchaWidgetContainer, {
+                // Clear previous instance if it exists to avoid reCAPTCHA errors
+                recaptchaContainerEl.innerHTML = '';
+                recaptchaId = window.grecaptcha.render(recaptchaContainerEl, {
                     'sitekey': siteKey,
+                    'theme': 'dark' 
                 });
             } catch (e) {
                 console.error("Error rendering reCAPTCHA:", e);
@@ -32,7 +36,7 @@
 
     onMount(() => {
         const interval = setInterval(() => {
-            if (window.grecaptcha) {
+            if (window.grecaptcha && window.grecaptcha.render) {
                 clearInterval(interval);
                 renderRecaptcha();
             }
@@ -47,19 +51,18 @@
         username = '';
         confirmPassword = '';
         
+       
         setTimeout(renderRecaptcha, 0);
     }
 
     async function handleLogin(event) {
         event.preventDefault();
-        
-        const captchaToken = window.grecaptcha.getResponse();
+        const captchaToken = window.grecaptcha.getResponse(recaptchaId);
         if (!captchaToken) {
             errorMessage = "Please complete the CAPTCHA.";
             toast.error(errorMessage);
             return;
         }
-
         isLoading = true;
         errorMessage = '';
         try {
@@ -68,25 +71,16 @@
             toast.success(data.message || 'Login successful!');
             tinroRouter.goto('/dashboard', { replace: true });
         } catch (error) {
-            console.error("Login failed:", error);
-            errorMessage = error.data?.message || error.message || 'Login failed. Please check your credentials.';
+            errorMessage = error.data?.message || 'Login failed. Please check your credentials.';
             toast.error(errorMessage);
         } finally {
             isLoading = false;
-            window.grecaptcha.reset();
+            window.grecaptcha.reset(recaptchaId);
         }
     }
 
     async function handleSignup(event) {
         event.preventDefault();
-        
-        // const captchaToken = window.grecaptcha.getResponse();
-        // if (!captchaToken) {
-        //     errorMessage = "Please complete the CAPTCHA.";
-        //     toast.error(errorMessage);
-        //     return;
-        // }
-
         if (password !== confirmPassword) {
              errorMessage = "Passwords do not match.";
              toast.error(errorMessage);
@@ -100,97 +94,68 @@
              toast.success(data.message || 'Signup successful! Welcome!');
              tinroRouter.goto('/dashboard', { replace: true });
         } catch (error) {
-             console.error("Signup failed:", error);
-             errorMessage = error.data?.message || error.message || 'Signup failed. Please try again.';
+             errorMessage = error.data?.message || 'Signup failed. Please try again.';
              toast.error(errorMessage);
         } finally {
              isLoading = false;
-            //  window.grecaptcha.reset();
         }
      }
 </script>
 
 <div class="auth-container">
-    <div class="auth-main" class:show-login={isLoginView}>
-        <div class="auth-form-section auth-signup">
-            <form onsubmit={handleSignup}>
-                <input type="text" name="txt" placeholder="User name" required bind:value={username} disabled={isLoading}>
-                <input type="email" name="email" placeholder="Email" required bind:value={email} disabled={isLoading}>
-                <input type="password" name="pswd" placeholder="Password (min 8 chars)" required bind:value={password} disabled={isLoading}>
-                <input type="password" name="confirmPswd" placeholder="Confirm Password" required bind:value={confirmPassword} disabled={isLoading}>
+    <div class="card auth-card">
+        {#if isLoginView}
+            <h2>Log In</h2>
+            <form onsubmit={handleLogin}>
+                <div class="form-group">
+                    <input type="email" placeholder="Email" required bind:value={email} disabled={isLoading} />
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" required bind:value={password} disabled={isLoading} />
+                </div>
+
+                {#if errorMessage}<div class="error-message">{errorMessage}</div>{/if}
                 
-                <div bind:this={recaptchaWidgetContainer} class="g-recaptcha"></div>
+                <div bind:this={recaptchaContainerEl} class="g-recaptcha"></div>
+                
+                <div class="auth-links">
+                    <span>&nbsp;</span> <a href="/forgot-password">Forgot Password?</a>
+                </div>
 
-                {#if errorMessage && !isLoginView}
-                    <div class="error-message">{errorMessage}</div>
-                {/if}
-                <button type="submit" disabled={isLoading}>
-                    {#if isLoading && !isLoginView}Signing up...{:else}Sign up{/if}
+                <button type="submit" class="btn btn-primary" disabled={isLoading}>
+                    {#if isLoading}Logging in...{:else}Log In{/if}
                 </button>
-                <button type="button" class="view-toggle-button" onclick={toggleView}>Already have an account? Log in</button>
-            </form>
-        </div>
-        <div class="auth-form-section auth-login">
-             <form onsubmit={handleLogin}>
-                <input type="email" name="email" placeholder="Email" required bind:value={email} disabled={isLoading}>
-                <input type="password" name="pswd" placeholder="Password" required bind:value={password} disabled={isLoading}>
 
-                <div bind:this={recaptchaWidgetContainer} class="g-recaptcha"></div>
-
-                {#if errorMessage && isLoginView}
-                    <div class="error-message">{errorMessage}</div>
-                {/if}
-                 <div class="forgot-password-link">
-                     <a href="/forgot-password">Forgot Password?</a>
-                 </div>
-                 <button type="submit" disabled={isLoading}>
-                     {#if isLoading && isLoginView}Logging in...{:else}Log in{/if}
+                <button type="button" class="toggle-link" onclick={toggleView}>
+                    Don't have an account? Sign up
                 </button>
-                <button type="button" class="view-toggle-button" onclick={toggleView}>Don't have an account? Sign up</button>
             </form>
-        </div>
+        {:else}
+            <h2>Create Account</h2>
+            <form onsubmit={handleSignup}>
+                <div class="form-group">
+                    <input type="text" placeholder="Username" required bind:value={username} disabled={isLoading} />
+                </div>
+                 <div class="form-group">
+                    <input type="email" placeholder="Email" required bind:value={email} disabled={isLoading} />
+                </div>
+                 <div class="form-group">
+                    <input type="password" placeholder="Password (min 8 chars)" required bind:value={password} disabled={isLoading} />
+                </div>
+                 <div class="form-group">
+                    <input type="password" placeholder="Confirm Password" required bind:value={confirmPassword} disabled={isLoading} />
+                </div>
+
+                {#if errorMessage}<div class="error-message">{errorMessage}</div>{/if}
+
+                <button type="submit" class="btn btn-primary" disabled={isLoading}>
+                    {#if isLoading}Creating account...{:else}Sign Up{/if}
+                </button>
+
+                <button type="button" class="toggle-link" onclick={toggleView}>
+                   Already have an account? Log in
+                </button>
+            </form>
+        {/if}
     </div>
 </div>
-
-<style>
-    .g-recaptcha {
-        margin: 15px auto;
-        /* The widget is 304px wide, this helps center it */
-        width: 304px; 
-        /* The container itself might be empty before Google renders into it */
-        min-height: 78px;
-    }
-    .forgot-password-link {
-        text-align: right;
-        margin-top: -5px;
-        margin-bottom: 15px;
-        font-size: 0.85em;
-    }
-    .forgot-password-link a {
-        color: #007bff;
-        text-decoration: none;
-    }
-    .forgot-password-link a:hover {
-        text-decoration: underline;
-    }
-     h2 {
-        text-align: center;
-        margin-bottom: 1.5rem;
-        color: #333;
-        font-weight: 500;
-    }
-    .view-toggle-button {
-        margin-top: 15px;
-        display: inline-block;
-        background: none;
-        border: none;
-        color: #007bff;
-        text-decoration: underline;
-        cursor: pointer;
-        font-size: 0.9em;
-        padding: 5px;
-    }
-    .view-toggle-button:hover {
-        color: #0056b3;
-    }
-</style>
