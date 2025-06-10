@@ -80,12 +80,12 @@
     async function handleSignup(event) {
         event.preventDefault();
         
-        const captchaToken = window.grecaptcha.getResponse();
-        if (!captchaToken) {
-            errorMessage = "Please complete the CAPTCHA.";
-            toast.error(errorMessage);
-            return;
-        }
+        // const captchaToken = window.grecaptcha.getResponse();
+        // if (!captchaToken) {
+        //     errorMessage = "Please complete the CAPTCHA.";
+        //     toast.error(errorMessage);
+        //     return;
+        // }
 
         if (password !== confirmPassword) {
              errorMessage = "Passwords do not match.";
@@ -95,7 +95,7 @@
         isLoading = true;
         errorMessage = '';
         try {
-             const data = await fetchPost('/auth/signup', { username, email, password, captchaToken });
+             const data = await fetchPost('/auth/signup', { username, email, password });
              setUser(data.user);
              toast.success(data.message || 'Signup successful! Welcome!');
              tinroRouter.goto('/dashboard', { replace: true });
@@ -105,7 +105,7 @@
              toast.error(errorMessage);
         } finally {
              isLoading = false;
-             window.grecaptcha.reset();
+            //  window.grecaptcha.reset();
         }
      }
 </script>

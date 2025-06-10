@@ -13,7 +13,7 @@ import {
 const router = Router();
 
 // Core Authentication
-router.post('/auth/signup', verifyRecaptcha, signup);
+router.post('/auth/signup', signup);
 router.post('/auth/login', verifyRecaptcha, login);
 router.post('/auth/logout', logout);
 router.get('/auth/session', checkSession);
