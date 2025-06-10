@@ -64,9 +64,45 @@ export const getRaceDetail = async (req, res, next) => {
         const raceDetails = response.data; 
 
         raceDetailCache.set(stageId, { data: raceDetails, timestamp: now });
-        res.status(200).json(raceDetails);
+        res.status(200).send(raceDetails);
     } catch (error) {
         console.error(`Backend Error fetching race ${stageId}:`, error.message);
         next(error);
     }
 };
+
+/* export const getRaceDetail = async (req, res, next) => {
+    const { stageId } = req.params;
+    const now = Date.now();
+
+    if (raceDetailCache.has(stageId) && (now - raceDetailCache.get(stageId).timestamp < CACHE_DURATION_MS)) {
+        console.log(`Serving race details for ${stageId} from cache.`);
+        return res.status(200).json(raceDetailCache.get(stageId).data);
+    }
+
+    try {
+        const url = `${SPORTRADAR_BASE_URL}/sport_events/${stageId}/summary.json?api_key=${API_KEY}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            // fetch doesn't throw on bad HTTP status, so we need to check and throw an error ourselves.
+            const error = new Error(`HTTP error! status: ${response.status}`);
+            error.status = response.status;
+            // Attempt to get more detailed error message from the response body
+            try {
+                error.data = await response.json();
+            } catch (e) {
+                // Ignore if the response is not JSON
+            }
+            throw error;
+        }
+
+        const raceDetails = await response.json();
+
+        raceDetailCache.set(stageId, { data: raceDetails, timestamp: now });
+        res.status(200).json(raceDetails);
+    } catch (error) {
+        console.error(`Backend Error fetching race ${stageId}:`, error.message);
+        next(error);
+    }
+}; */
