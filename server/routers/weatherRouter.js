@@ -1,5 +1,3 @@
-// NodeExam/server/routers/weatherRouter.js
-
 import { Router } from 'express';
 import axios from 'axios';
 import { isAuthenticated } from '../middleware/authMiddleware.js';
@@ -30,9 +28,9 @@ router.get('/api/weather/forecast', isAuthenticated, async (req, res, next) => {
 
         const forecast = {
             description: weatherData.weather?.description,
-            icon: weatherData.weather?.icon, // We will use this icon code
+            icon: weatherData.weather?.icon, 
             temp: weatherData.temp,
-            feels_like: weatherData.app_temp, // Weatherbit calls it 'app_temp'
+            feels_like: weatherData.app_temp, 
             wind_speed: weatherData.wind_spd,
         };
 

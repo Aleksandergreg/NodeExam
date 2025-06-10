@@ -3,10 +3,9 @@
     import { setUser } from '../../stores/authStore.js';
     import { fetchPost } from '../../utils/fetchApi.js';
     import { router as tinroRouter } from 'tinro';
-    import { onMount } from 'svelte'; // 1. Import onMount
+    import { onMount } from 'svelte'; 
     import '../../styles/authForm.css'
 
-    // --- Component State ---
     let isLoginView = $state(true);
     let email = $state('');
     let password = $state('');
@@ -15,7 +14,7 @@
     let isLoading = $state(false);
     let errorMessage = $state('');
 
-    const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LcGyForAAAAABZYBRSt49vSjwfEFL6ASo5YbMeK"; // Fallback for your hardcoded key
+    const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LcGyForAAAAABZYBRSt49vSjwfEFL6ASo5YbMeK"; 
 
     let recaptchaWidgetContainer; 
 
