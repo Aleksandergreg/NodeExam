@@ -1,4 +1,5 @@
 <script>
+  import './App.styles.css';
   import { Route, router as tinroRouter, active } from 'tinro';
   import { toast } from 'svelte-5-french-toast';
 
@@ -17,7 +18,7 @@
   import RankingsPage from './lib/pages/Race/RankingsPage.svelte';
   import RaceDetailPage from './lib/pages/Race/RaceDetailPage.svelte';
   import AdminPanelPage from './lib/pages/Admin/AdminPanelPage.svelte';
-  import LiveCommentaryPage from './lib/pages/Race/LiveCommentaryPage.svelte'; // Import live page
+  import LiveCommentaryPage from './lib/pages/Race/LiveCommentaryPage.svelte';
 
   let user = $state(null);
   let loading = $state(true);
@@ -34,10 +35,8 @@
   function isUserLoggedIn() { return !loading && !!user; }
   function isUserLoggedOut() { return !loading && !user; }
   function isUserAdmin() { return !loading && user?.role === 'admin'; }
-  // Guard for premium users
   function isUserPremium() { return !loading && user?.premium_status; }
 
-  // Enhanced Redirection Effect
   $effect(() => {
     if (!loading) {
       const currentPath = $tinroRouter.path;
@@ -70,29 +69,38 @@
         toast.error(error.data?.message || 'Logout failed.');
     }
   }
-
 </script>
 
 {#if loading}
-  <p>Loading application...</p>
+  <div class="loading-fullscreen">
+    <p>Loading application...</p>
+  </div>
 {:else}
-  <nav>
-    <a href="/" use:active={{exact: true}}>Home</a>
-    <a href="/races" use:active>Races</a>
-    <a href="/rankings" use:active>Rankings</a>
-    {#if user}
-        <a href="/dashboard" use:active>Dashboard</a>
-        {#if user.role === 'admin'}
-            <a href="/admin" use:active>Admin Panel</a>
+  <header class="app-header">
+    <nav class="app-nav container">
+      <div class="nav-left">
+        <a href="/" use:active={{exact: true}} class="nav-logo">🚴 CyclingHub</a>
+        <a href="/races" use:active>Races</a>
+        <a href="/rankings" use:active>Rankings</a>
+        {#if user}
+            <a href="/dashboard" use:active>Dashboard</a>
+            {#if user.role === 'admin'}
+                <a href="/admin" use:active>Admin Panel</a>
+            {/if}
         {/if}
-        <PremiumButton />
-        <button class="logout-button" onclick={handleLogout}>Logout ({user.username})</button>
-    {:else if !loading}
-        <a href="/login" use:active>Login/Sign Up</a>
-    {/if}
-  </nav>
+      </div>
+      <div class="nav-right">
+        {#if user}
+            <PremiumButton />
+            <button class="logout-button" onclick={handleLogout}>Logout ({user.username})</button>
+        {:else if !loading}
+            <a href="/login" use:active class="btn btn-primary">Login / Sign Up</a>
+        {/if}
+      </div>
+    </nav>
+  </header>
 
-  <main>
+  <main class="container">
       <Route path="/"> <HomePage /> </Route>
       <Route path="/races"> <RacesPage /> </Route>
       <Route path="/race/:stageId" let:meta> <RaceDetailPage stageId={meta.params.stageId} /> </Route>
@@ -104,7 +112,6 @@
       <Route path="/admin"> {#if isUserAdmin()} <AdminPanelPage /> {/if} </Route>
       <Route path="/payment-success"> <PaymentSuccessPage /> </Route>
       
-      <!-- Live Commentary Route with Guard -->
       <Route path="/race/live/:stageId" let:meta>
           {#if isUserPremium()}
               <LiveCommentaryPage stageId={meta.params.stageId} />
@@ -112,20 +119,13 @@
       </Route>
 
       <Route path="/*" fallback>
+        <div class="not-found">
             <h2>404 - Not Found</h2>
-            <a href="/">Go Home</a>
+            <p>The page you're looking for doesn't seem to exist.</p>
+            <a href="/" class="btn btn-primary">Go Home</a>
+        </div>
       </Route>
   </main>
 
   <Toaster position="bottom-center" />
 {/if}
-
-<style>
-    nav { display: flex; gap: 1rem; padding: 1rem; background-color: #f8f9fa; margin-bottom: 1rem; align-items: center; color: #343a40; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    nav a { color: #007bff; text-decoration: none; padding: 0.5rem 0; transition: color 0.2s ease-in-out, border-bottom 0.2s ease-in-out; }
-    nav a:hover { text-decoration: none; color: #0056b3; }
-    .logout-button { background: none; border: none; padding: 0.5rem 0; margin: 0; font: inherit; cursor: pointer; color: #dc3545; margin-left: auto; transition: color 0.2s ease-in-out; }
-    .logout-button:hover { text-decoration: underline; color: #c82333; }
-    main { padding: 1rem; max-width: 1200px; margin: 0 auto; }
-    main h2 { color: #dc3545; text-align: center; margin-bottom: 1rem; }
-    main a { display: block; text-align: center; color: #007bff; }</style>

@@ -1,0 +1,33 @@
+/*
+  This file defines the design tokens for the entire application,
+  establishing a consistent and maintainable theme.
+*/
+:root {
+    /* Color Palette */
+    --primary-color: #5e81ac;
+    --primary-color-darker: #4c6a8c;
+    --background-color: #2e3440;
+    --surface-color: #3b4252;
+    --surface-color-light: #434c5e;
+    --text-color: #d8dee9;
+    --text-color-muted: #a3abbb;
+    --border-color: #4c566a;
+    
+    --success-color: #a3be8c;
+    --warning-color: #ebcb8b;
+    --error-color: #bf616a;
+  
+    /* Typography */
+    --font-family-sans: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+    --font-size-base: 16px;
+    --line-height-base: 1.6;
+  
+    /* Sizing & Spacing */
+    --spacing-unit: 1rem;
+    --border-radius: 8px;
+    --max-width-container: 1200px;
+  
+    /* Effects */
+    --box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition-fast: all 0.2s ease-in-out;
+  }

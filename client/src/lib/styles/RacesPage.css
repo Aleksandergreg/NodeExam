@@ -1,0 +1,37 @@
+.races-container h1 {
+    text-align: center;
+}
+.races-container .subtitle {
+    text-align: center;
+    color: var(--text-color-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: calc(var(--spacing-unit) * 2);
+}
+
+.local-search-card {
+    margin-bottom: calc(var(--spacing-unit) * 2);
+}
+
+.local-search-card h3 {
+    margin-top: 0;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-unit);
+    margin-top: var(--spacing-unit);
+}
+
+.error-message {
+    color: var(--error-color);
+}
+
+.separator {
+    margin: calc(var(--spacing-unit) * 3) 0;
+    border: 0;
+    border-top: 1px solid var(--border-color);
+}
