@@ -29,7 +29,7 @@ export const getWeatherForecast = async (req, res, next) => {
             wind_speed: weatherData.wind_spd,
         };
 
-        res.status(200).json(forecast);
+        res.status(200).send(forecast);
     } catch (error) {
         console.error("Weatherbit API error:", error.response?.data || error.message);
         next(new Error('Could not fetch weather data for the specified city.'));

@@ -36,7 +36,7 @@ export const getCommentaryHistory = async (req, res, next) => {
     try {
         const sql = `SELECT id, username, comment, created_at, kms_to_go FROM commentary WHERE race_id = $1 ORDER BY created_at DESC`;
         const { rows } = await query(sql, [raceId]);
-        res.status(200).json(rows);
+        res.status(200).send(rows);
     } catch (error) {
         console.error("Error fetching commentary history:", error);
         next(error);

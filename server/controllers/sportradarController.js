@@ -55,7 +55,7 @@ export const getRaceDetail = async (req, res, next) => {
 
     if (raceDetailCache.has(stageId) && (now - raceDetailCache.get(stageId).timestamp < CACHE_DURATION_MS)) {
         console.log(`Serving race details for ${stageId} from cache.`);
-        return res.status(200).json(raceDetailCache.get(stageId).data);
+        return res.status(200).send(raceDetailCache.get(stageId).data);
     }
 
     try {
@@ -100,7 +100,7 @@ export const getRaceDetail = async (req, res, next) => {
         const raceDetails = await response.json();
 
         raceDetailCache.set(stageId, { data: raceDetails, timestamp: now });
-        res.status(200).json(raceDetails);
+        res.status(200).send(raceDetails);
     } catch (error) {
         console.error(`Backend Error fetching race ${stageId}:`, error.message);
         next(error);

@@ -12,7 +12,7 @@ export const getAllUsers = async (req, res, next) => {
             ORDER BY id ASC;
         `;
         const { rows } = await query(sql);
-        res.status(200).json(rows);
+        res.status(200).send(rows);
     } catch (error) {
         console.error("Admin fetch users error:", error);
         next(error);
@@ -49,7 +49,7 @@ export const updateUser = async (req, res, next) => {
             return res.status(404).send({ message: "User not found." });
         }
 
-        res.status(200).json({ message: "User updated successfully.", user: rows[0] });
+        res.status(200).send({ message: "User updated successfully.", user: rows[0] });
     } catch (error) {
         console.error(`Admin update user ${userId} error:`, error);
         next(error);
