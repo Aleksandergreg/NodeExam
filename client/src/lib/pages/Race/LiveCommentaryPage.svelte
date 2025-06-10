@@ -94,7 +94,7 @@
             {#if comments.length === 0}
                 <li class="card empty-list">No commentary yet.</li>
             {/if}
-            {#each comments.toReversed() as comment (comment.id)}
+            {#each comments as comment (comment.id)}
                 {@const parsed = parseComment(comment.comment)}
                 <li class="commentary-item card">
                     {#if comment.kms_to_go !== null && comment.kms_to_go >= 0}

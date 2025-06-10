@@ -34,7 +34,7 @@ export const postCommentary = async (req, res, next) => {
 export const getCommentaryHistory = async (req, res, next) => {
     const { raceId } = req.params;
     try {
-        const sql = `SELECT id, username, comment, created_at, kms_to_go FROM commentary WHERE race_id = $1 ORDER BY created_at ASC`;
+        const sql = `SELECT id, username, comment, created_at, kms_to_go FROM commentary WHERE race_id = $1 ORDER BY created_at DESC`;
         const { rows } = await query(sql, [raceId]);
         res.status(200).json(rows);
     } catch (error) {
