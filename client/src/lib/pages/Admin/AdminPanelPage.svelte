@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { fetchGet, fetchPut } from '../../utils/fetchApi.js';
     import { toast } from 'svelte-5-french-toast';
+    import '../../styles/AdminPanel.css';
 
     let users = $state([]);
     let isLoading = $state(true);
@@ -52,27 +53,8 @@
     onMount(fetchUsers);
 </script>
 
-<style>
-    .admin-container { padding: 1rem; }
-    .admin-container h1 { text-align: center; color: #343a40; margin-bottom: 2rem; }
-    .loading, .error { text-align: center; font-size: 1.2rem; padding: 2rem; }
-    .error { color: #dc3545; }
-    .table-responsive { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 800px; }
-    th, td { padding: 12px 15px; border: 1px solid #dee2e6; text-align: left; }
-    th { background-color: #f8f9fa; font-weight: bold; }
-    tr:nth-child(even) { background-color: #f2f2f2; }
-    select, input, button {
-        padding: 6px 10px; border-radius: 4px; border: 1px solid #ced4da;
-        background-color: #fff; color: #495057; font-size: 0.95em;
-    }
-    button { cursor: pointer; margin-right: 5px; }
-    .btn-save { background-color: #28a745; color: white; border-color: #28a745; }
-    .btn-cancel { background-color: #6c757d; color: white; border-color: #6c757d; }
-    .btn-edit { background-color: #007bff; color: white; border-color: #007bff; }
-</style>
 
-<div class="admin-container">
+<div class="admin-panel-container">
     <h1>Admin Panel - User Management</h1>
 
     {#if isLoading}

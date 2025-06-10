@@ -1,0 +1,95 @@
+.admin-panel-container h1 {
+    text-align: center;
+}
+
+.loading, .error {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: calc(var(--spacing-unit) * 2);
+}
+
+.error {
+    color: var(--error-color);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+th, td {
+    padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit);
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    background-color: var(--surface-color-light);
+    font-weight: 600;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover {
+    background-color: var(--surface-color-light);
+}
+
+.premium-yes {
+    color: var(--success-color);
+    font-weight: 500;
+}
+
+.premium-no {
+    color: var(--text-color-muted);
+}
+
+/* --- NEW AND CORRECTED BUTTON STYLES --- */
+
+/* A shared base style for all buttons in the table */
+.btn-edit, .btn-save, .btn-cancel {
+    display: inline-block;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: var(--border-radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-align: center;
+    color: #eceff4; /* Set a default light text color */
+}
+
+/* Specific color for each button */
+.btn-edit {
+    background-color: var(--primary-color);
+}
+.btn-edit:hover {
+    background-color: var(--primary-color-darker);
+}
+
+.btn-save {
+    background-color: var(--success-color);
+    color: #2e3440; /* Darker text for the light green button */
+}
+.btn-save:hover {
+    background-color: #8fbcbb; /* A slightly different green for hover */
+}
+
+.btn-cancel {
+    background-color: var(--surface-color-light);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+.btn-cancel:hover {
+    background-color: var(--border-color);
+}
