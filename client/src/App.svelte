@@ -19,6 +19,10 @@
   import RaceDetailPage from './lib/pages/Race/RaceDetailPage.svelte';
   import AdminPanelPage from './lib/pages/Admin/AdminPanelPage.svelte';
   import LiveCommentaryPage from './lib/pages/Race/LiveCommentaryPage.svelte';
+  import NewsPage from './lib/pages/News/NewsPage.svelte';
+  import ArticleDiscussionPage from './lib/pages/News/ArticleDiscussionPage.svelte';
+
+
 
   let user = $state(null);
   let loading = $state(true);
@@ -88,6 +92,7 @@
                 <a href="/admin" use:active>Admin Panel</a>
             {/if}
         {/if}
+        <a href="/news" use:active>News</a>
       </div>
       <div class="nav-right">
         {#if user}
@@ -117,6 +122,10 @@
               <LiveCommentaryPage stageId={meta.params.stageId} />
           {/if}
       </Route>
+      <Route path="/news"> <NewsPage /> </Route>
+      <Route path="/news/:id" let:meta> <ArticleDiscussionPage articleId={meta.params.id} /> </Route>
+
+
 
       <Route path="/*" fallback>
         <div class="not-found">
@@ -125,6 +134,7 @@
             <a href="/" class="btn btn-primary">Go Home</a>
         </div>
       </Route>
+    
   </main>
 
   <Toaster position="bottom-center" />
