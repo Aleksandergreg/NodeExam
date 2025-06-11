@@ -6,6 +6,7 @@ import sportradarRouter from './sportradarRouter.js';
 import adminRouter from './adminRouter.js';
 import commentaryRouter from './commentaryRouter.js';
 import weatherRouter from './weatherRouter.js'; 
+import newsRouter from './newsRouter.js';
 
 
 
@@ -17,6 +18,7 @@ router.use(racesRouter);
 router.use(sportradarRouter);
 router.use(weatherRouter);
 router.use(commentaryRouter);
+router.use(newsRouter);
 router.use(adminRouter); 
 
 export default router;
