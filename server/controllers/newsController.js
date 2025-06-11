@@ -19,8 +19,12 @@ export const getNewsFeed = async (req, res, next) => {
     }
 
     try {
-        const response = await axios.get(`https://newsapi.org/v2/everything?q=cycling&language=en&sortBy=publishedAt&pageSize=40&apiKey=${process.env.NEWS_API_KEY}`);
-        
+        const relevantDomains = 'cyclingnews.com,velonews.com,road.cc,cyclist.co.uk,bikeradar.com';
+
+        const response = await axios.get(
+            `https://newsapi.org/v2/everything?q=cycling&domains=${relevantDomains}&language=en&sortBy=publishedAt&pageSize=40&apiKey=${process.env.NEWS_API_KEY}`
+        );
+                
         const articlesFromApi = response.data.articles.filter(a => a.urlToImage); // Only use articles with images
 
         // Save new articles to our database. `ON CONFLICT` prevents duplicates.
