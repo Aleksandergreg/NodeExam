@@ -1,11 +1,15 @@
 import { Router } from 'express';
-import { getNewsFeed } from '../controllers/newsController.js';
-// import other controllers for comments
+import { getNewsFeed, getArticleDetails, getArticleComments, postArticleComment } from '../controllers/newsController.js';
+import { isAuthenticated } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
-router.get('/news', getNewsFeed);
-// router.get('/news/:articleId/comments', getArticleComments);
-// router.post('/news/:articleId/comments', isAuthenticated, postArticleComment);
+// Public routes
+router.get('/api/news', getNewsFeed);
+router.get('/api/news/:id', getArticleDetails);
+router.get('/api/news/:id/comments', getArticleComments);
+
+// Protected route - only logged-in users can comment
+router.post('/api/news/:id/comments', isAuthenticated, postArticleComment);
 
 export default router;
