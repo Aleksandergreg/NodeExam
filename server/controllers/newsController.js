@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { query } from '../utils/db.js';
+import pool, { query } from '../utils/db.js';
 
 // Simple in-memory cache to store the news feed
 const newsCache = {
@@ -182,38 +182,38 @@ export const postArticleComment = async (req, res, next) => {
         next(error);
     }
 };
-
 /**
- * Handles upvoting a comment.
+ * Handles upvoting a comment using a proper database transaction.
  */
 export const voteOnComment = async (req, res, next) => {
+    const client = await pool.connect();
+
     try {
         const { commentId } = req.params;
         const { userId } = req.session;
 
-        const client = await query('BEGIN');
+        await client.query('BEGIN');
 
-        try {
-            const existingVote = await query('SELECT * FROM comment_votes WHERE user_id = $1 AND comment_id = $2', [userId, commentId]);
+        const existingVote = await client.query('SELECT * FROM comment_votes WHERE user_id = $1 AND comment_id = $2', [userId, commentId]);
 
-            let newUpvoteCount;
-            if (existingVote.rows.length > 0) {
-                await query('DELETE FROM comment_votes WHERE user_id = $1 AND comment_id = $2', [userId, commentId]);
-                const result = await query('UPDATE article_comments SET upvotes = upvotes - 1 WHERE id = $1 RETURNING upvotes', [commentId]);
-                newUpvoteCount = result.rows[0].upvotes;
-            } else {
-                await query('INSERT INTO comment_votes (user_id, comment_id) VALUES ($1, $2)', [userId, commentId]);
-                const result = await query('UPDATE article_comments SET upvotes = upvotes + 1 WHERE id = $1 RETURNING upvotes', [commentId]);
-                newUpvoteCount = result.rows[0].upvotes;
-            }
-
-            await query('COMMIT');
-            res.status(200).send({ upvotes: newUpvoteCount });
-        } catch (e) {
-            await query('ROLLBACK');
-            throw e;
+        let newUpvoteCount;
+        if (existingVote.rows.length > 0) {
+            await client.query('DELETE FROM comment_votes WHERE user_id = $1 AND comment_id = $2', [userId, commentId]);
+            const result = await client.query('UPDATE article_comments SET upvotes = upvotes - 1 WHERE id = $1 RETURNING upvotes', [commentId]);
+            newUpvoteCount = result.rows[0].upvotes;
+        } else {
+            await client.query('INSERT INTO comment_votes (user_id, comment_id) VALUES ($1, $2)', [userId, commentId]);
+            const result = await client.query('UPDATE article_comments SET upvotes = upvotes + 1 WHERE id = $1 RETURNING upvotes', [commentId]);
+            newUpvoteCount = result.rows[0].upvotes;
         }
-    } catch (error) {
-        next(error);
+
+        await client.query('COMMIT');
+        res.status(200).json({ upvotes: newUpvoteCount });
+
+    } catch (e) {
+        await client.query('ROLLBACK');
+        next(e);
+    } finally {
+        client.release();
     }
 };
