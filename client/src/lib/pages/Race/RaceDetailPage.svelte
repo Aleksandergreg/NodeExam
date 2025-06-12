@@ -60,7 +60,7 @@
           {raceDetails.departure_city} to {raceDetails.arrival_city}
         {/if}
         {#if raceDetails.distance}
-          ({raceDetails.distance} {raceDetails.distance_unit})
+          ({raceDetails.distance} {raceDetails.distance_unit} km )
         {/if}
       </p>
     </div>

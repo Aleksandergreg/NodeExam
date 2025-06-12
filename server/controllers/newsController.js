@@ -133,7 +133,7 @@ export const postArticleComment = async (req, res, next) => {
         newsCache.lastFetch = 0;
         console.log('News cache invalidated due to new comment.');
 
-        res.status(201).json(rows[0]);
+        res.status(201).send(rows[0]);
     } catch (error) {
         next(error);
     }
