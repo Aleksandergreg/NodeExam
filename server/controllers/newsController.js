@@ -99,41 +99,120 @@ export const getArticleDetails = async (req, res, next) => {
 };
 
 /**
- * Gets all comments for a specific article.
+ * Helper function to build a nested comment tree from a flat list of comments.
+ * @param {Array} comments - The flat list of comments from the database.
+ * @returns {Array} A nested array of comments.
+ */
+function buildCommentTree(comments) {
+    const commentMap = {};
+    const commentTree = [];
+
+    comments.forEach(comment => {
+        commentMap[comment.id] = { ...comment, replies: [] };
+    });
+
+    comments.forEach(comment => {
+        if (comment.parent_comment_id) {
+            if (commentMap[comment.parent_comment_id]) {
+                commentMap[comment.parent_comment_id].replies.push(commentMap[comment.id]);
+            }
+        } else {
+            commentTree.push(commentMap[comment.id]);
+        }
+    });
+
+    return commentTree;
+}
+
+/**
+ * Gets all comments for a specific article, including user vote status and nested replies.
  */
 export const getArticleComments = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const { rows } = await query('SELECT * FROM article_comments WHERE article_id = $1 ORDER BY created_at ASC', [id]);
-        res.status(200).send(rows);
+        const { id: article_id } = req.params;
+        const { userId } = req.session;
+
+        const sql = `
+            SELECT 
+                c.*,
+                CASE WHEN v.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS has_voted
+            FROM 
+                article_comments c
+            LEFT JOIN 
+                comment_votes v ON c.id = v.comment_id AND v.user_id = $2
+            WHERE 
+                c.article_id = $1
+            ORDER BY 
+                c.upvotes DESC, c.created_at ASC;
+        `;
+        
+        const { rows: flatComments } = await query(sql, [article_id, userId]);
+
+        const nestedComments = buildCommentTree(flatComments);
+        
+        res.status(200).send(nestedComments);
     } catch (error) {
         next(error);
     }
 };
-
 /**
- * Allows a logged-in user to post a comment on an article.
+ * Allows a logged-in user to post a comment, now with an optional parent_comment_id.
  */
 export const postArticleComment = async (req, res, next) => {
     try {
         const { id: article_id } = req.params;
         const { userId, username } = req.session;
-        const { content } = req.body;
+        const { content, parent_comment_id = null } = req.body;
 
         if (!content || content.trim() === '') {
             return res.status(400).send({ message: 'Comment content cannot be empty.' });
         }
 
         const { rows } = await query(
-            'INSERT INTO article_comments (content, article_id, user_id, username) VALUES ($1, $2, $3, $4) RETURNING *',
-            [content, article_id, userId, username]
+            `INSERT INTO article_comments (content, article_id, user_id, username, parent_comment_id) 
+             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [content, article_id, userId, username, parent_comment_id]
         );
         
         newsCache.data = null;
         newsCache.lastFetch = 0;
-        console.log('News cache invalidated due to new comment.');
 
         res.status(201).send(rows[0]);
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Handles upvoting a comment.
+ */
+export const voteOnComment = async (req, res, next) => {
+    try {
+        const { commentId } = req.params;
+        const { userId } = req.session;
+
+        const client = await query('BEGIN');
+
+        try {
+            const existingVote = await query('SELECT * FROM comment_votes WHERE user_id = $1 AND comment_id = $2', [userId, commentId]);
+
+            let newUpvoteCount;
+            if (existingVote.rows.length > 0) {
+                await query('DELETE FROM comment_votes WHERE user_id = $1 AND comment_id = $2', [userId, commentId]);
+                const result = await query('UPDATE article_comments SET upvotes = upvotes - 1 WHERE id = $1 RETURNING upvotes', [commentId]);
+                newUpvoteCount = result.rows[0].upvotes;
+            } else {
+                await query('INSERT INTO comment_votes (user_id, comment_id) VALUES ($1, $2)', [userId, commentId]);
+                const result = await query('UPDATE article_comments SET upvotes = upvotes + 1 WHERE id = $1 RETURNING upvotes', [commentId]);
+                newUpvoteCount = result.rows[0].upvotes;
+            }
+
+            await query('COMMIT');
+            res.status(200).send({ upvotes: newUpvoteCount });
+        } catch (e) {
+            await query('ROLLBACK');
+            throw e;
+        }
     } catch (error) {
         next(error);
     }

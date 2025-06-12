@@ -4,6 +4,7 @@
     import { user as userStore } from '../../stores/authStore.js';
     import { toast } from 'svelte-5-french-toast';
     import '../../styles/ArticleDiscussionPage.css';
+    import Comment from '../../components/News/Comment.svelte';
 
     let { articleId } = $props();
     
@@ -18,7 +19,7 @@
     let newCommentContent = $state('');
     let isSubmitting = $state(false);
 
-    onMount(async () => {
+    async function fetchAllData() {
         try {
             const [articleData, commentsData] = await Promise.all([
                 fetchGet(`/api/news/${articleId}`),
@@ -32,7 +33,9 @@
         } finally {
             isLoading = false;
         }
-    });
+    }
+
+    onMount(fetchAllData);
 
     async function handleCommentSubmit(event) {
         event.preventDefault();
@@ -42,10 +45,12 @@
         }
         isSubmitting = true;
         try {
-            const newComment = await fetchPost(`/api/news/${articleId}/comments`, {
+            await fetchPost(`/api/news/${articleId}/comments`, {
                 content: newCommentContent
             });
-            comments = [...comments, newComment];
+            
+            comments = await fetchGet(`/api/news/${articleId}/comments`);
+
             newCommentContent = ''; 
             toast.success("Comment posted!");
         } catch (err) {
@@ -75,12 +80,12 @@
         </div>
 
         <div class="comments-section">
-            <h2>Discussion ({comments.length})</h2>
+            <h2>Discussion ({comments.length} threads)</h2>
 
             {#if user}
                 <form class="card comment-form" onsubmit={handleCommentSubmit}>
                     <textarea 
-                        placeholder="Join the discussion..." 
+                        placeholder="Start a new discussion thread..." 
                         bind:value={newCommentContent}
                         disabled={isSubmitting}
                         rows="4"
@@ -95,20 +100,14 @@
                 </p>
             {/if}
 
-            <ul class="comment-list">
+            <div class="comment-list">
                 {#if comments.length === 0}
-                    <li class="card no-comments">Be the first to comment.</li>
+                    <div class="card no-comments">Be the first to comment.</div>
                 {/if}
                 {#each comments as comment (comment.id)}
-                    <li class="card comment-item">
-                        <div class="comment-header">
-                            <span class="comment-author">{comment.username}</span>
-                            <span class="comment-date">{new Date(comment.created_at).toLocaleString()}</span>
-                        </div>
-                        <p class="comment-content">{comment.content}</p>
-                    </li>
+                    <Comment {comment} {user} {articleId} />
                 {/each}
-            </ul>
+            </div>
         </div>
     {/if}
 </div>
