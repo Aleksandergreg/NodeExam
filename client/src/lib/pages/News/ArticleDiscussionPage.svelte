@@ -80,7 +80,7 @@
         </div>
 
         <div class="comments-section">
-            <h2>Discussion ({comments.length} threads)</h2>
+            <h2>Discussion ({comments.length})</h2>
 
             {#if user}
                 <form class="card comment-form" onsubmit={handleCommentSubmit}>
