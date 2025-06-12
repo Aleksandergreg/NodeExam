@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {Filter} from 'bad-words'; 
 import pool, { query } from '../utils/db.js';
 
 // Simple in-memory cache to store the news feed
@@ -7,6 +8,7 @@ const newsCache = {
     lastFetch: 0,
     CACHE_DURATION_MS: 15 * 60 * 1000, // 15 minutes
 };
+const filter = new Filter();
 
 /**
  * Fetches the main news feed.
@@ -168,10 +170,11 @@ export const postArticleComment = async (req, res, next) => {
             return res.status(400).send({ message: 'Comment content cannot be empty.' });
         }
 
+        const cleanContent = filter.clean(content)
+
         const { rows } = await query(
-            `INSERT INTO article_comments (content, article_id, user_id, username, parent_comment_id) 
-             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [content, article_id, userId, username, parent_comment_id]
+            'INSERT INTO article_comments (content, article_id, user_id, username, parent_comment_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [cleanContent, article_id, userId, username, req.body.parent_comment_id || null]
         );
         
         newsCache.data = null;
