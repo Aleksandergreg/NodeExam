@@ -208,7 +208,7 @@ export const voteOnComment = async (req, res, next) => {
         }
 
         await client.query('COMMIT');
-        res.status(200).json({ upvotes: newUpvoteCount });
+        res.status(200).send({ upvotes: newUpvoteCount });
 
     } catch (e) {
         await client.query('ROLLBACK');
