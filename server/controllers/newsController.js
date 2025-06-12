@@ -128,7 +128,12 @@ export const postArticleComment = async (req, res, next) => {
             'INSERT INTO article_comments (content, article_id, user_id, username) VALUES ($1, $2, $3, $4) RETURNING *',
             [content, article_id, userId, username]
         );
-        res.status(201).send(rows[0]);
+        
+        newsCache.data = null;
+        newsCache.lastFetch = 0;
+        console.log('News cache invalidated due to new comment.');
+
+        res.status(201).json(rows[0]);
     } catch (error) {
         next(error);
     }
