@@ -60,7 +60,7 @@
           {raceDetails.departure_city} to {raceDetails.arrival_city}
         {/if}
         {#if raceDetails.distance}
-          ({raceDetails.distance} {raceDetails.distance_unit} km )
+          ({raceDetails.distance} {raceDetails.distance_unit} km)
         {/if}
       </p>
     </div>
@@ -89,7 +89,7 @@
       <ol class="card competitor-list">
         {#each raceDetails.competitors as competitor, i (competitor.id)}
           <li class="competitor-item">
-            <span class="rank">{i + 1}.</span>
+            <span class="rank">{i + 1}.   </span>
             <span class="competitor-name">{competitor.name} ({competitor.nationality})</span>
             <span class="time">Time: {competitor.result?.time || "N/A"}</span>
           </li>
@@ -97,4 +97,4 @@
       </ol>
     {/if}
   {/if}
-</div>
+</div> 
