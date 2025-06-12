@@ -19,4 +19,11 @@ CREATE TABLE article_comments (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE comment_votes (
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  comment_id INTEGER NOT NULL REFERENCES article_comments(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (user_id, comment_id)
+);
+
 CREATE INDEX idx_article_comments_article_id ON article_comments(article_id);
