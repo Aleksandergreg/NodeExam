@@ -4,7 +4,7 @@
     import { loadStripe } from '@stripe/stripe-js';
   
     let stripe;
-  
+    
     async function handlePremiumClick() {
         if (!stripe) {
             stripe = await loadStripe('pk_test_51RQY8ARkqrA6nukbH9eJ6bQA5bC6oQ2zqzRdouqSSELk6o1uPrxHig2ZpMdbsCtvCjJYT5TLii2NsGhiYV23V6Ej00trL6piGu');

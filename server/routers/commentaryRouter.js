@@ -4,8 +4,8 @@ import { postCommentary, getCommentaryHistory } from '../controllers/commentaryC
 
 const router = Router();
 
-router.post('/commentary/:raceId', isAuthenticated, isAdmin, postCommentary);
+router.post('/:raceId', isAuthenticated, isAdmin, postCommentary);
 
-router.get('/commentary/:raceId', isAuthenticated, getCommentaryHistory);
+router.get('/:raceId', isAuthenticated, getCommentaryHistory);
 
 export default router;

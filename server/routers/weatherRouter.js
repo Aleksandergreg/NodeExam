@@ -4,6 +4,6 @@ import { getWeatherForecast } from '../controllers/weatherController.js';
 
 const router = Router();
 
-router.get('/api/weather/forecast', isAuthenticated, getWeatherForecast);
+router.get('/', isAuthenticated, getWeatherForecast);
 
 export default router;

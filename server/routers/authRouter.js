@@ -13,16 +13,16 @@ import {
 const router = Router();
 
 // Core Authentication
-router.post('/auth/signup', signup);
-router.post('/auth/login', verifyRecaptcha, login);
-router.post('/auth/logout', logout);
-router.get('/auth/session', checkSession);
+router.post('/signup', signup);
+router.post('/login', verifyRecaptcha, login);
+router.post('/logout', logout);
+router.get('/session', checkSession);
 
 // Password Reset
-router.post('/auth/request-password-reset', requestPasswordReset);
-router.post('/auth/reset-password', resetPassword);
+router.post('/request-password-reset', requestPasswordReset);
+router.post('/reset-password', resetPassword);
 
 // Stripe Payment
-router.post('/auth/create-checkout-session', createCheckoutSession);
+router.post('/create-checkout-session', createCheckoutSession);
 
 export default router;

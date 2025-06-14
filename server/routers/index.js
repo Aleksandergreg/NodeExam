@@ -12,13 +12,13 @@ import newsRouter from './newsRouter.js';
 
 const router = Router();
 
-router.use(authRouter);
+router.use("/auth", authRouter);
 router.use(protectedRouter);
-router.use(racesRouter);
-router.use(sportradarRouter);
-router.use(weatherRouter);
-router.use(commentaryRouter);
+router.use('/api/races/search', racesRouter);
+router.use('/api/sportradar', sportradarRouter);
+router.use('/api/weather/forecast', weatherRouter);
+router.use("/commentary", commentaryRouter);
 router.use(newsRouter);
-router.use(adminRouter); 
+router.use("/admin", adminRouter); 
 
 export default router;

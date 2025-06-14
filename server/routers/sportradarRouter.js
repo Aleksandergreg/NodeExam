@@ -3,8 +3,8 @@ import { getScheduleByYear, getRankings, getRaceDetail } from '../controllers/sp
 
 const router = Router();
 
-router.get('/api/sportradar/schedule/:year', getScheduleByYear);
-router.get('/api/sportradar/rankings', getRankings);
-router.get('/api/sportradar/race/:stageId', getRaceDetail);
+router.get('/schedule/:year', getScheduleByYear);
+router.get('/rankings', getRankings);
+router.get('/race/:stageId', getRaceDetail);
 
 export default router;
