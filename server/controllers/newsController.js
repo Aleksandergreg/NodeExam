@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Filter} from 'bad-words'; 
+import { Filter } from 'bad-words'; 
 import pool, { query } from '../utils/db.js';
 
 // Simple in-memory cache to store the news feed

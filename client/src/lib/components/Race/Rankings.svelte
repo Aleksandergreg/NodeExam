@@ -8,7 +8,6 @@
     // --- MOCK DATA for DEVELOPMENT ---
     // The Sportradar Trial API is returning an empty array for rankings.
     // We use this mock data to build the component.
-    // When you have a production API key, you can delete this section.
     const mockRankings = [
         {
             name: "UCI World Ranking",
@@ -39,9 +38,9 @@
         isLoading = false;
 
         /*
-        // --- REAL API CALL (for when you have a production key) ---
+        // --- REAL API CALL ---
         try {
-            const data = await fetchGet('/api/sportradar/rankings');
+            const data = await fetchGet('/sportradar/rankings');
             if (data && data.length > 0) {
                 rankings = data;
             } else {

@@ -32,7 +32,7 @@
         activeRaceId = null; 
 
         try {
-            const data = await fetchGet(`/api/sportradar/schedule/${year}`);
+            const data = await fetchGet(`/sportradar/schedule/${year}`);
             races = data.races || [];
         } catch (err) {
             error = err.data?.message || 'An error occurred.';

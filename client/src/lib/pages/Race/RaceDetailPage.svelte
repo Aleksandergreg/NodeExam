@@ -22,7 +22,7 @@
 
     try {
       const data = await fetchGet(
-        `/api/sportradar/race/${encodeURIComponent(stageId)}`
+        `/sportradar/race/${encodeURIComponent(stageId)}`
       );
 
       if (data && data.stage) {
@@ -30,7 +30,7 @@
 
         if (raceDetails.departure_city) {
           try {
-              weather = await fetchGet(`/api/weather/forecast?city=${raceDetails.departure_city}`);
+              weather = await fetchGet(`/weather/forecast?city=${raceDetails.departure_city}`);
           } catch (weatherError) {
               console.warn("Could not fetch weather:", weatherError);
           }

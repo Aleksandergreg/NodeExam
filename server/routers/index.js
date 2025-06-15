@@ -14,9 +14,9 @@ const router = Router();
 
 router.use("/auth", authRouter);
 router.use(protectedRouter);
-router.use('/api/races/search', racesRouter);
-router.use('/api/sportradar', sportradarRouter);
-router.use('/api/weather/forecast', weatherRouter);
+router.use('/races/search', racesRouter);
+router.use('/sportradar', sportradarRouter);
+router.use('/weather/forecast', weatherRouter);
 router.use("/commentary", commentaryRouter);
 router.use(newsRouter);
 router.use("/admin", adminRouter); 

@@ -8,7 +8,7 @@
 
     onMount(async () => {
         try {
-            const data = await fetchGet('/api/sportradar/races');
+            const data = await fetchGet('/sportradar/races');
 
             races = data.races || [];
         } catch (err) {
