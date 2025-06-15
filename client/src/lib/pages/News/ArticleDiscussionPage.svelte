@@ -22,8 +22,8 @@
     async function fetchAllData() {
         try {
             const [articleData, commentsData] = await Promise.all([
-                fetchGet(`/api/news/${articleId}`),
-                fetchGet(`/api/news/${articleId}/comments`)
+                fetchGet(`/news/${articleId}`),
+                fetchGet(`/news/${articleId}/comments`)
             ]);
             article = articleData;
             comments = commentsData;
@@ -45,11 +45,11 @@
         }
         isSubmitting = true;
         try {
-            await fetchPost(`/api/news/${articleId}/comments`, {
+            await fetchPost(`/news/${articleId}/comments`, {
                 content: newCommentContent
             });
             
-            comments = await fetchGet(`/api/news/${articleId}/comments`);
+            comments = await fetchGet(`/news/${articleId}/comments`);
 
             newCommentContent = ''; 
             toast.success("Comment posted!");

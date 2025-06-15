@@ -17,8 +17,8 @@ router.use(protectedRouter);
 router.use('/races/search', racesRouter);
 router.use('/sportradar', sportradarRouter);
 router.use('/weather/forecast', weatherRouter);
-router.use("/commentary", commentaryRouter);
-router.use(newsRouter);
-router.use("/admin", adminRouter); 
+router.use('/commentary', commentaryRouter);
+router.use('/news', newsRouter);
+router.use('/admin', adminRouter); 
 
 export default router;

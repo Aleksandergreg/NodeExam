@@ -21,7 +21,7 @@
         reactiveComment.has_voted = !reactiveComment.has_voted;
 
         try {
-            await fetchPost(`/api/comments/${reactiveComment.id}/vote`, {});
+            await fetchPost(`/news/${reactiveComment.id}/vote`, {});
         } catch (err) {
             reactiveComment.upvotes += reactiveComment.has_voted ? -1 : 1;
             reactiveComment.has_voted = !reactiveComment.has_voted;
@@ -35,7 +35,7 @@
         
         isSubmittingReply = true;
         try {
-            const newReply = await fetchPost(`/api/news/${articleId}/comments`, {
+            const newReply = await fetchPost(`/news/${articleId}/comments`, {
                 content: replyContent,
                 parent_comment_id: reactiveComment.id
             });

@@ -9,7 +9,7 @@
 
     onMount(async () => {
         try {
-            articles = await fetchGet('/api/news');
+            articles = await fetchGet('/news');
         } catch (error) {
             console.error("Failed to fetch news feed", error);
         } finally {

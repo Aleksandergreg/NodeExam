@@ -43,7 +43,7 @@ app.use(generalLimiter);
 app.use('/auth', authLimiter);
 
 // Routers
-app.use(routers);
+app.use('/api/v1', routers);
 
 // Initialize socket logic
 initializeSocketIO(io);
