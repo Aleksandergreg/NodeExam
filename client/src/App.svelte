@@ -26,6 +26,8 @@
   import NewsPage from "./lib/pages/News/NewsPage.svelte";
   import ArticleDiscussionPage from "./lib/pages/News/ArticleDiscussionPage.svelte";
   import LocalSearchPage from "./lib/pages/Race/LocalSearchPage.svelte";
+  import Footer from "./lib/components/Footer/Footer.svelte"; 
+
 
   let user = $state(null);
   let loading = $state(true);
@@ -198,5 +200,6 @@
     </Route>
   </main>
 
+  <Footer />
   <Toaster position="bottom-center" />
 {/if}
