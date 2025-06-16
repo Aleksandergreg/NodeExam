@@ -7,26 +7,26 @@
     user as userStore,
     loading as loadingStore,
     clearUser,
-  } from "./lib/stores/authStore.js";
-  import { fetchPost } from "./lib/utils/fetchApi.js";
-  import HomePage from "./lib/pages/Homepage/HomePage.svelte";
-  import LoginPage from "./lib/pages/LoginPage/LoginPage.svelte";
-  import DashboardPage from "./lib/pages/DashboardPage/DashboardPage.svelte";
-  import RequestPasswordResetPage from "./lib/pages/Auth/RequestPasswordResetPage.svelte";
-  import ResetPasswordPage from "./lib/pages/Auth/ResetPasswordPage.svelte";
-  import RacesPage from "./lib/pages/Race/RacesPage.svelte";
-  import Toaster from "./lib/components/Toaster/Toaster.svelte";
-  import PremiumButton from "./lib/components/Premium/PremiumButton.svelte";
-  import PremiumContent from "./lib/components/Premium/PremiumContent.svelte";
-  import PaymentSuccessPage from "./lib/pages/PaymentSuccessPage/PaymentSuccessPage.svelte";
-  import RankingsPage from "./lib/pages/Race/RankingsPage.svelte";
-  import RaceDetailPage from "./lib/pages/Race/RaceDetailPage.svelte";
-  import AdminPanelPage from "./lib/pages/Admin/AdminPanelPage.svelte";
-  import LiveCommentaryPage from "./lib/pages/Race/LiveCommentaryPage.svelte";
-  import NewsPage from "./lib/pages/News/NewsPage.svelte";
-  import ArticleDiscussionPage from "./lib/pages/News/ArticleDiscussionPage.svelte";
-  import LocalSearchPage from "./lib/pages/Race/LocalSearchPage.svelte";
-  import Footer from "./lib/components/Footer/Footer.svelte"; 
+  } from "./stores/authStore.js";
+  import { fetchPost } from "./utils/fetchApi.js";
+  import HomePage from "./pages/Homepage/HomePage.svelte";
+  import LoginPage from "./pages/LoginPage/LoginPage.svelte";
+  import DashboardPage from "./pages/DashboardPage/DashboardPage.svelte";
+  import RequestPasswordResetPage from "./pages/Auth/RequestPasswordResetPage.svelte";
+  import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.svelte";
+  import RacesPage from "./pages/Race/RacesPage.svelte";
+  import Toaster from "./components/Toaster/Toaster.svelte";
+  import PremiumButton from "./components/Premium/PremiumButton.svelte";
+  import PremiumContent from "./components/Premium/PremiumContent.svelte";
+  import PaymentSuccessPage from "./pages/PaymentSuccessPage/PaymentSuccessPage.svelte";
+  import RankingsPage from "./pages/Race/RankingsPage.svelte";
+  import RaceDetailPage from "./pages/Race/RaceDetailPage.svelte";
+  import AdminPanelPage from "./pages/Admin/AdminPanelPage.svelte";
+  import LiveCommentaryPage from "./pages/Race/LiveCommentaryPage.svelte";
+  import NewsPage from "./pages/News/NewsPage.svelte";
+  import ArticleDiscussionPage from "./pages/News/ArticleDiscussionPage.svelte";
+  import LocalSearchPage from "./pages/Race/LocalSearchPage.svelte";
+  import Footer from "./components/Footer/Footer.svelte"; 
 
 
   let user = $state(null);
