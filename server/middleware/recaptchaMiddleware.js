@@ -1,24 +1,35 @@
-import axios from 'axios';
-
 export async function verifyRecaptcha(req, res, next) {
     const { captchaToken } = req.body;
     const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-
+  
     if (!captchaToken) {
-        return res.status(400).send({ message: 'CAPTCHA token is missing.' });
+      return res.status(400).send({ message: 'CAPTCHA token is missing.' });
     }
-
-    const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`;
-
+  
+    const body = new URLSearchParams({
+      secret: secretKey,
+      response: captchaToken,
+    });
+  
     try {
-        const { data } = await axios.post(verificationUrl);
-        if (data.success) {
-            return next(); // CAPTCHA was successful, proceed to the next handler
-        } else {
-            return res.status(400).send({ message: 'Failed CAPTCHA verification.' });
-        }
-    } catch (error) {
-        console.error("reCAPTCHA verification error:", error);
-        return res.status(500).send({ message: 'Error verifying CAPTCHA.' });
+      const response = await fetch(
+        'https://www.google.com/recaptcha/api/siteverify',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body,
+        },
+      );
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        return next();             
+      }
+      return res.status(400).json({ message: 'Failed CAPTCHA verification.' });
+    } catch (err) {
+      console.error('reCAPTCHA verification error:', err);
+      return res.status(500).json({ message: 'Error verifying CAPTCHA.' });
     }
-}
+  }
+  

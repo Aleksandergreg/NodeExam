@@ -25,6 +25,7 @@
   import LiveCommentaryPage from "./lib/pages/Race/LiveCommentaryPage.svelte";
   import NewsPage from "./lib/pages/News/NewsPage.svelte";
   import ArticleDiscussionPage from "./lib/pages/News/ArticleDiscussionPage.svelte";
+  import LocalSearchPage from "./lib/pages/Race/LocalSearchPage.svelte";
 
   let user = $state(null);
   let loading = $state(true);
@@ -104,6 +105,7 @@
           >🚴 CyclingHub</a
         >
         <a href="/races" use:active>Races</a>
+        <a href="/local-search" use:active>Search DB</a>
         <a href="/rankings" use:active>Rankings</a>
         <a href="/news" use:active>News</a>
         {#if user}
@@ -132,6 +134,8 @@
       <Route path="/"><HomePage /></Route>
 
       <Route path="/races"><RacesPage /></Route>
+
+      <Route path="/local-search"><LocalSearchPage /></Route>
 
       <Route path="/race/:stageId" let:meta>
         <RaceDetailPage stageId={meta.params.stageId} />
