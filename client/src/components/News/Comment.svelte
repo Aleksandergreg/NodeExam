@@ -1,4 +1,6 @@
 <script>
+    import Comment from './Comment.svelte';
+
     import '../../styles/Comment.css';
     import { fetchPost } from '../../utils/fetchApi.js';
     import { toast } from 'svelte-5-french-toast';
@@ -78,8 +80,7 @@
     {#if reactiveComment.replies && reactiveComment.replies.length > 0}
         <div class="replies-container">
             {#each reactiveComment.replies as reply (reply.id)}
-                <!-- This is the recursion! -->
-                <svelte:self comment={reply} {user} {articleId} />
+                <Comment comment={reply} {user} {articleId} />
             {/each}
         </div>
     {/if}
