@@ -7,7 +7,7 @@
             await checkSession();
 
             setTimeout(() => {
-                tinroRouter.goto('/dashboard', { replace: true });
+                tinroRouter.goto('/', { replace: true });
             }, 2500); // 2.5 second delay
         };
 
