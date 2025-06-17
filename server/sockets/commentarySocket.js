@@ -15,11 +15,9 @@ async function createAnswerComment(raceId, userId, username, question, answer) {
 
 export function initializeSocketIO(io) {
     io.on("connection", (socket) => {
-        console.log("A client connected:", socket.id);
 
         socket.on("join_race_room", (raceId) => {
             socket.join(raceId);
-            console.log(`Socket ${socket.id} joined room for race ${raceId}`);
 
             // If the connected user is an admin, send them the current question queue for that race
             if (socket.request.session?.userRole === 'admin') {
@@ -30,7 +28,6 @@ export function initializeSocketIO(io) {
 
         socket.on("leave_race_room", (raceId) => {
             socket.leave(raceId);
-            console.log(`Socket ${socket.id} left room for race ${raceId}`);
         });
 
 

@@ -25,7 +25,6 @@ export async function sendSignupEmail(toEmail, toName, username) {
     .setText(`Welcome aboard, ${username}! Thank you for signing up. You can now log in to your account. We're excited to have you!`);
 
   try {
-    console.log(`Attempting to send signup email to ${toEmail}...`);
     const response = await mailerSend.email.send(emailParams);
     console.log('MailerSend Signup Response:', response);
     console.log(`Signup email successfully sent to ${toEmail}`);
@@ -65,10 +64,7 @@ export async function sendPasswordResetEmail(toEmail, toName, resetToken, userId
     .setText(`Hello ${toName || 'User'},\n\nYou requested a password reset. Please go to the following link to set a new password (link expires in 1 hour):\n${resetLink}\n\nIf you did not request this, please ignore this email.`);
 
   try {
-    console.log(`Attempting to send password reset email to ${toEmail}...`);
     const response = await mailerSend.email.send(emailParams);
-    console.log('MailerSend Password Reset Response:', response);
-    console.log(`Password reset email successfully sent to ${toEmail}`);
   } catch (error) {
     console.error(`Error sending password reset email to ${toEmail}:`, error?.response?.data?.errors || error.message);
     // throw error; // Could uncomment if I want to propagate the error

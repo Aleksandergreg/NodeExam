@@ -54,7 +54,6 @@ export const getRaceDetail = async (req, res, next) => {
     const now = Date.now();
 
     if (raceDetailCache.has(stageId) && (now - raceDetailCache.get(stageId).timestamp < CACHE_DURATION_MS)) {
-        console.log(`Serving race details for ${stageId} from cache.`);
         return res.status(200).send(raceDetailCache.get(stageId).data);
     }
 

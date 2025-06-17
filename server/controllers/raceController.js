@@ -3,7 +3,6 @@ import { query } from '../utils/db.js';
 export const searchRaces = async (req, res, next) => {
     const { q } = req.query;
 
-    console.log(`--- [SEARCH] Received request for: "${q}" ---`);
 
 
     if (!q) {
@@ -23,7 +22,6 @@ export const searchRaces = async (req, res, next) => {
             ORDER BY r.name, r.year DESC, res.position ASC;
         `;
         const { rows } = await query(searchQuery, [`%${q}%`]);
-        console.log(`--- [DB] Query returned ${rows.length} rows. ---`);
 
 
         const groupedResults = rows.reduce((acc, row) => {

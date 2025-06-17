@@ -26,7 +26,6 @@ router.post('/', async (req, res, next) => {
         try {
             const updateUserSql = 'UPDATE users SET premium_status = TRUE, premium_expiry_date = $1 WHERE id = $2';
             await query(updateUserSql, [premiumExpiryDate, userId]);
-            console.log(`User ${userId} has been granted premium access.`);
         } catch (error) {
             console.error('Failed to update user to premium:', error);
             return res.status(500).send({ message: 'Failed to update user premium status.' });

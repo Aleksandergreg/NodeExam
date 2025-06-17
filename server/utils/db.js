@@ -9,20 +9,8 @@ const missingEnv = requiredEnv.filter(envVar => !process.env[envVar]);
 
 if (missingEnv.length > 0) {
     console.error(`FATAL ERROR: Missing required database environment variables: ${missingEnv.join(', ')}`);
-    console.log('Current process.env contents related to DB:');
-    requiredEnv.forEach(key => console.log(`${key}: ${process.env[key]}`));
-    console.log('------------------------------------');
     process.exit(1);
-}
-
-console.log('--- Attempting Database Pool Creation ---');
-console.log('Using DB_USER:', process.env.DB_USER);
-console.log('Using DB_HOST:', process.env.DB_HOST);
-console.log('Using DB_DATABASE:', process.env.DB_DATABASE);
-console.log('Using DB_PORT:', process.env.DB_PORT);
-console.log('Is DB_PASSWORD set?', process.env.DB_PASSWORD ? 'Yes' : 'No'); // Avoid logging password
-console.log('------------------------------------');
-
+};
 
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -33,7 +21,6 @@ const pool = new Pool({
 });
 
 
-console.log('--- Testing Connection with Direct Client ---');
 const testClient = new Client({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -47,7 +34,6 @@ testClient.connect(err => {
         console.error('FATAL ERROR: Direct client connection test failed:', err.stack);
         process.exit(1);
     } else {
-        console.log('Successfully connected and disconnected using direct client test.');
         testClient.end();
     }
 });
