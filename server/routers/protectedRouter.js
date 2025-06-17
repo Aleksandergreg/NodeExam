@@ -15,7 +15,6 @@ router.get('/protected/dashboard-data', isAuthenticated, (req, res) => {
 // This route requires the user to be logged in AND be an admin
 router.get('/protected/admin-only', isAuthenticated, isAdmin, (req, res) => {
     // The isAdmin middleware already verified the role and attached req.isAdmin
-    console.log("Admin access granted to user:", req.session.username);
     res.send({
         message: `Hello Admin ${req.session.username}! This is the secret admin panel.`
     });
