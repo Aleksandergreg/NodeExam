@@ -34,7 +34,7 @@
     }
     async function fetchHistory() {
         try {
-            comments = await fetchGet(`/commentary/${stageId}`);
+            comments = await fetchGet(`/commentaries/${stageId}`);
         } catch (error) {
             toast.error("Could not load comment history.");
         } finally {

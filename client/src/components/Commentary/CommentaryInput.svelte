@@ -25,7 +25,7 @@
 					answerText: commentText.trim()
 				});
 			} else {
-				await fetchPost(`/commentary/${stageId}`, {
+				await fetchPost(`/commentaries/${stageId}`, {
 					comment: commentText,
 					kms_to_go: kmsToGo !== '' ? parseInt(kmsToGo, 10) : null
 				});
