@@ -11,7 +11,6 @@
   import { fetchPost } from "./utils/fetchApi.js";
   import HomePage from "./pages/Homepage/HomePage.svelte";
   import LoginPage from "./pages/LoginPage/LoginPage.svelte";
-  import DashboardPage from "./pages/DashboardPage/DashboardPage.svelte";
   import RequestPasswordResetPage from "./pages/Auth/RequestPasswordResetPage.svelte";
   import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.svelte";
   import RacesPage from "./pages/Race/RacesPage.svelte";
@@ -26,11 +25,11 @@
   import NewsPage from "./pages/News/NewsPage.svelte";
   import ArticleDiscussionPage from "./pages/News/ArticleDiscussionPage.svelte";
   import LocalSearchPage from "./pages/Race/LocalSearchPage.svelte";
-  import Footer from "./components/Footer/Footer.svelte"; 
-
+  import Footer from "./components/Footer/Footer.svelte";
 
   let user = $state(null);
   let loading = $state(true);
+  let adminToastShown = $state(false);
 
   $effect(() => {
     const unsubUser = userStore.subscribe((value) => (user = value));
@@ -64,21 +63,25 @@
       const isLivePage = currentPath.startsWith("/race/live/");
 
       if (user && isAuthPage) {
-        tinroRouter.goto("/dashboard", { replace: true });
-      } else if (
-        !user &&
-        (currentPath === "/dashboard" || isAdminPage || isLivePage)
-      ) {
+        tinroRouter.goto("/", { replace: true });
+      } else if (!user && (isAdminPage || isLivePage)) {
         toast.error("Please log in to access this page.");
         tinroRouter.goto("/login", { replace: true });
       } else if (user && isAdminPage && user.role !== "admin") {
         toast.error("Access Denied: Admin privileges required.");
-        tinroRouter.goto("/dashboard", { replace: true });
+        tinroRouter.goto("/", { replace: true });
       } else if (user && isLivePage && !user.premium_status) {
         toast.error(
           "This is a premium feature. Please subscribe to view live commentary."
         );
-        tinroRouter.goto("/dashboard", { replace: true });
+        tinroRouter.goto("/", { replace: true });
+      }
+
+      if (user && user.role === 'admin' && !adminToastShown) {
+        toast.success('Admin access granted!');
+        adminToastShown = true;
+      } else if (!user) {
+        adminToastShown = false;
       }
     }
   });
@@ -110,11 +113,8 @@
         <a href="/local-search" use:active>Search DB</a>
         <a href="/rankings" use:active>Rankings</a>
         <a href="/news" use:active>News</a>
-        {#if user}
-          <a href="/dashboard" use:active>Dashboard</a>
-          {#if user.role === "admin"}
-            <a href="/admin" use:active>Admin Panel</a>
-          {/if}
+        {#if user && user.role === "admin"}
+          <a href="/admin" use:active>Admin Panel</a>
         {/if}
       </div>
       <div class="nav-right">
@@ -160,13 +160,6 @@
       <Route path="/reset-password">
         {#if isUserLoggedOut()}
           <ResetPasswordPage />
-        {/if}
-      </Route>
-
-      <Route path="/dashboard">
-        {#if isUserLoggedIn()}
-          <DashboardPage />
-          <PremiumContent />
         {/if}
       </Route>
 

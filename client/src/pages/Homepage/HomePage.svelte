@@ -1,3 +1,17 @@
-<h1>Welcome to the App!</h1>
-<p>This is the public home page.</p>
-<p>You can log in or sign up to access protected areas.</p>
+<script>
+    import { user as userStore } from '../../stores/authStore.js';
+    import PremiumContent from '../../components/Premium/PremiumContent.svelte';
+
+    let user = $state(null);
+	userStore.subscribe(value => user = value);
+</script>
+
+<h1>Welcome to CyclingHub!</h1>
+<p>
+    Your one-stop place for past race results, live commentary, and the latest cycling news. Explore the archives, follow live races, and join the discussion!
+</p>
+
+{#if user && user.premium_status}
+    <hr />
+    <PremiumContent />
+{/if}
