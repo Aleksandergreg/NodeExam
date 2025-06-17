@@ -16,7 +16,6 @@
   import RacesPage from "./pages/Race/RacesPage.svelte";
   import Toaster from "./components/Toaster/Toaster.svelte";
   import PremiumButton from "./components/Premium/PremiumButton.svelte";
-  import PremiumContent from "./components/Premium/PremiumContent.svelte";
   import PaymentSuccessPage from "./pages/PaymentSuccessPage/PaymentSuccessPage.svelte";
   import RankingsPage from "./pages/Race/RankingsPage.svelte";
   import RaceDetailPage from "./pages/Race/RaceDetailPage.svelte";
