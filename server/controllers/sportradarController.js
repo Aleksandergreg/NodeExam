@@ -35,20 +35,32 @@ export const getScheduleByYear = async (req, res, next) => {
     }
 };
 
+
 export const getRankings = async (req, res, next) => {
     const now = Date.now();
-    if (rankingsCache.data && (now - rankingsCache.timestamp < CACHE_DURATION_MS)) {
-        return res.status(200).send(rankingsCache.data);
+  
+    if (rankingsCache.data && now - rankingsCache.timestamp < CACHE_DURATION_MS) {
+      return res.status(200).send(rankingsCache.data);
     }
+  
     try {
-        const response = await axios.get(`${SPORTRADAR_BASE_URL}/rankings.json?api_key=${API_KEY}`);
-        const rankings = response.data.rankings || [];
-        rankingsCache = { data: rankings, timestamp: now };
-        res.status(200).send(rankings);
-    } catch (error) {
-        next(error);
+      const url = `${SPORTRADAR_BASE_URL}/rankings.json?api_key=${API_KEY}`;
+      const response = await fetch(url);
+  
+      if (!response.ok) {
+        const msg = await response.text();
+        throw new Error(`SportRadar responded ${response.status}: ${msg}`);
+      }
+  
+      const { rankings = [] } = await response.json();
+  
+      rankingsCache = { data: rankings, timestamp: now };
+      res.status(200).send(rankings);
+    } catch (err) {
+      next(err); 
     }
-};
+  };
+  
 
 export const getRaceDetail = async (req, res, next) => {
     const { stageId } = req.params;
