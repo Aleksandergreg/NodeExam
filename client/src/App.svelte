@@ -8,23 +8,23 @@
     loading as loadingStore,
     clearUser,
   } from "./stores/authStore.js";
-  import { fetchPost } from "./utils/fetchApi.js";
-  import HomePage from "./pages/Homepage/HomePage.svelte";
-  import LoginPage from "./pages/LoginPage/LoginPage.svelte";
-  import RequestPasswordResetPage from "./pages/Auth/RequestPasswordResetPage.svelte";
-  import ResetPasswordPage from "./pages/Auth/ResetPasswordPage.svelte";
-  import RacesPage from "./pages/Race/RacesPage.svelte";
-  import Toaster from "./components/Toaster/Toaster.svelte";
-  import PremiumButton from "./components/Premium/PremiumButton.svelte";
-  import PaymentSuccessPage from "./pages/PaymentSuccessPage/PaymentSuccessPage.svelte";
-  import RankingsPage from "./pages/Race/RankingsPage.svelte";
-  import RaceDetailPage from "./pages/Race/RaceDetailPage.svelte";
-  import AdminPanelPage from "./pages/Admin/AdminPanelPage.svelte";
-  import LiveCommentaryPage from "./pages/Race/LiveCommentaryPage.svelte";
-  import NewsPage from "./pages/News/NewsPage.svelte";
-  import ArticleDiscussionPage from "./pages/News/ArticleDiscussionPage.svelte";
-  import LocalSearchPage from "./pages/Race/LocalSearchPage.svelte";
-  import Footer from "./components/Footer/Footer.svelte";
+  import { fetchPost } from './utils/fetchApi.js';
+  import HomePage from './pages/Homepage/HomePage.svelte';
+  import LoginPage from './pages/LoginPage/LoginPage.svelte';
+  import RequestPasswordResetPage from './pages/Auth/RequestPasswordResetPage.svelte';
+  import ResetPasswordPage from './pages/Auth/ResetPasswordPage.svelte';
+  import RacesPage from './pages/Race/RacesPage.svelte';
+  import Toaster from './components/Toaster/Toaster.svelte';
+  import PremiumButton from './components/Premium/PremiumButton.svelte';
+  import PaymentSuccessPage from './pages/PaymentSuccessPage/PaymentSuccessPage.svelte';
+  import RankingsPage from './pages/Race/RankingsPage.svelte';
+  import RaceDetailPage from './pages/Race/RaceDetailPage.svelte';
+  import AdminPanelPage from './pages/Admin/AdminPanelPage.svelte';
+  import LiveCommentaryPage from './pages/Race/LiveCommentaryPage.svelte';
+  import NewsPage from './pages/News/NewsPage.svelte';
+  import ArticleDiscussionPage from './pages/News/ArticleDiscussionPage.svelte';
+  import LocalSearchPage from './pages/Race/LocalSearchPage.svelte';
+  import Footer from './components/Footer/Footer.svelte';
 
   let user = $state(null);
   let loading = $state(true);
