@@ -17,6 +17,7 @@
     let pendingQuestions = $state([]);
     let selectedQuestion = $state(null);
     userStore.subscribe(value => user = value);
+    
     function parseComment(commentText) {
         const qaRegex = /^Q: "(.+?)"\s*\n\s*A: (.*)$/s;
         const match = commentText.match(qaRegex);
@@ -41,6 +42,7 @@
             isLoading = false;
         }
     }
+    
     onMount(() => {
         fetchHistory();
         socket = io("http://localhost:8080", { withCredentials: true });

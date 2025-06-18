@@ -26,10 +26,10 @@ export async function verifyRecaptcha(req, res, next) {
       if (data.success) {
         return next();             
       }
-      return res.status(400).json({ message: 'Failed CAPTCHA verification.' });
+      return res.status(400).send({ message: 'Failed CAPTCHA verification.' });
     } catch (err) {
       console.error('reCAPTCHA verification error:', err);
-      return res.status(500).json({ message: 'Error verifying CAPTCHA.' });
+      return res.status(500).send({ message: 'Error verifying CAPTCHA.' });
     }
   }
   

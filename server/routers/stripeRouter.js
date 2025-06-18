@@ -5,6 +5,7 @@ import { query } from '../utils/db.js';
 const stripeClient = stripe(process.env.STRIPE_SECRET_KEY);
 const router = Router();
 
+
 router.post('/', async (req, res, next) => {
     const sig = req.headers['stripe-signature'];
     let event;
