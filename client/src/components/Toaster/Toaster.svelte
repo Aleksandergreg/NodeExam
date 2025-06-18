@@ -1,7 +1,13 @@
 <script lang="ts">
     import { Toaster as FrenchToastToaster, type ToastPosition } from 'svelte-5-french-toast';
 
-    export let position: ToastPosition = "top-right"; // Default position
+    // Define the type for the component's props
+    interface Props {
+      position?: ToastPosition;
+    }
+
+    // Destructure props and set a default value for 'position'
+    let { position = "top-right" }: Props = $props();
 </script>
 
 <FrenchToastToaster {position} />

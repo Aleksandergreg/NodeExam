@@ -14,7 +14,7 @@
     let isLoading = $state(false);
     let errorMessage = $state('');
   
-    const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LcGyForAAAAABZYBRSt49vSjwfEFL6ASo5YbMeK";
+    const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   
     let recaptchaContainerEl = $state();
     let recaptchaId = null;
