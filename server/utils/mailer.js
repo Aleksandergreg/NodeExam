@@ -59,7 +59,6 @@ export async function sendPasswordResetEmail(toEmail, toName, resetToken, userId
       <p>This link will expire in 1 hour.</p>
       <p>If you did not request a password reset, please ignore this email.</p>
       <br>
-      <p>Link: ${resetLink}</p> 
     `)
     .setText(`Hello ${toName || 'User'},\n\nYou requested a password reset. Please go to the following link to set a new password (link expires in 1 hour):\n${resetLink}\n\nIf you did not request this, please ignore this email.`);
 

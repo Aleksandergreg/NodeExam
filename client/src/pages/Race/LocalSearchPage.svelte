@@ -1,5 +1,5 @@
 <script>
-    import '../../styles/RacesPage.css'; // Reusing some styles
+    import '../../styles/RacesPage.css'; 
     import { fetchGet } from '../../utils/fetchApi.js';
     import LocalRaceCard from '../../components/Race/LocalRaceCard.svelte';
 
