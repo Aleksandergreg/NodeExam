@@ -11,6 +11,7 @@ import { notFound, errorHandler } from './middleware/errorHandlers.js';
 
 import stripeRouter from './routers/stripeRouter.js';
 import routers from './routers/index.js';
+
 import { initializeSocketIO } from './sockets/commentarySocket.js'; 
 
 import './utils/db.js';

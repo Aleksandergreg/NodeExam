@@ -4,10 +4,12 @@
     import { loadStripe } from '@stripe/stripe-js';
   
     let stripe;
+    const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
     
     async function handlePremiumClick() {
         if (!stripe) {
-            stripe = await loadStripe('pk_test_51RQY8ARkqrA6nukbH9eJ6bQA5bC6oQ2zqzRdouqSSELk6o1uPrxHig2ZpMdbsCtvCjJYT5TLii2NsGhiYV23V6Ej00trL6piGu');
+            stripe = await loadStripe(stripePublishableKey);
         }
   
         const { id: sessionId } = await fetchPost('/auth/create-checkout-session', { userId: $user.id });
