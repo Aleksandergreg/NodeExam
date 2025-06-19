@@ -4,7 +4,7 @@
     import { fetchPost } from '../../utils/fetchApi.js';
     import { router as tinroRouter } from 'tinro';
     import { onMount } from 'svelte';
-    import '../../styles/authForm.css';
+    import '../../styles/AuthForm.css';
   
     let isLoginView = $state(true);
     let email = $state('');

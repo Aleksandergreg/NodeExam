@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import "./App.styles.css";
   import { Route, router as tinroRouter, active } from "tinro";
   import { toast } from "svelte-5-french-toast";

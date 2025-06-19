@@ -1,6 +1,5 @@
 import { query } from '../utils/db.js';
 
-const pendingQuestions = new Map();
 
 async function createAnswerComment(raceId, userId, username, question, answer) {
     const formattedComment = `Q: "${question}"\nA: ${answer}`;
@@ -16,12 +15,12 @@ async function createAnswerComment(raceId, userId, username, question, answer) {
 export function initializeSocketIO(io) {
     io.on("connection", (socket) => {
 
-        socket.on("join_race_room", (raceId) => {
+        socket.on("join_race_room", async (raceId) => { 
             socket.join(raceId);
 
-            // If the connected user is an admin, send them the current question queue for that race
             if (socket.request.session?.userRole === 'admin') {
-                const questionsForRace = pendingQuestions.get(raceId) || [];
+                const sql = "SELECT * FROM live_questions WHERE race_id = $1 AND status = 'pending' ORDER BY created_at ASC";
+                const { rows: questionsForRace } = await query(sql, [raceId]);
                 socket.emit('admin_question_queue', questionsForRace);
             }
         });
@@ -35,12 +34,15 @@ export function initializeSocketIO(io) {
             const { userId, username } = socket.request.session;
             if (!userId || !username || !questionText.trim()) return;
 
-            const newQuestion = { id: Date.now(), userId, username, questionText };
+            const sql = `
+                INSERT INTO live_questions (race_id, user_id, username, question_text)
+                VALUES ($1, $2, $3, $4)
+                RETURNING *;
+            `;
+            const { rows } = await query(sql, [raceId, userId, username, questionText.trim()]);
+            const newQuestion = rows[0];
 
-            const questionsForRace = pendingQuestions.get(raceId) || [];
-            questionsForRace.push(newQuestion);
-            pendingQuestions.set(raceId, questionsForRace);
-
+            // Notify all admins in the room about the new question
             const socketsInRoom = await io.in(raceId).fetchSockets();
             for (const adminSocket of socketsInRoom) {
                 if (adminSocket.request.session?.userRole === 'admin') {
@@ -53,18 +55,20 @@ export function initializeSocketIO(io) {
             const { userId, username, userRole } = socket.request.session;
             if (userRole !== 'admin' || !answerText.trim()) return;
 
-            const newComment = await createAnswerComment(raceId, userId, username, question.questionText, answerText);
-            
+            const newComment = await createAnswerComment(raceId, userId, username, question.question_text, answerText); 
             io.to(raceId).emit('new_commentary_update', newComment);
+            
+            await query("UPDATE live_questions SET status = 'answered' WHERE id = $1", [question.id]);
 
-            let questionsForRace = pendingQuestions.get(raceId) || [];
-            questionsForRace = questionsForRace.filter(q => q.id !== question.id);
-            pendingQuestions.set(raceId, questionsForRace);
-
+            const { rows: updatedQuestions } = await query(
+                "SELECT * FROM live_questions WHERE race_id = $1 AND status = 'pending' ORDER BY created_at ASC",
+                [raceId]
+            );
+            
             const socketsInRoom = await io.in(raceId).fetchSockets();
             for (const adminSocket of socketsInRoom) {
                  if (adminSocket.request.session?.userRole === 'admin') {
-                    adminSocket.emit('admin_question_queue', questionsForRace);
+                    adminSocket.emit('admin_question_queue', updatedQuestions);
                 }
             }
         });
