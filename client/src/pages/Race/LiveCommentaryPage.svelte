@@ -51,7 +51,7 @@
         });
         socket.on('new_commentary_update', (newComment) => {
             comments = [...comments, newComment];
-            if (selectedQuestion && newComment.comment.includes(selectedQuestion.questionText)) {
+            if (selectedQuestion && newComment.comment.includes(selectedQuestion.question_text)) {
                 selectedQuestion = null;
             }
         });

@@ -56,7 +56,7 @@
 
     {#if questionToAnswer}
         <div class="answering-question">
-            <p><strong>{questionToAnswer.username}:</strong> "{questionToAnswer.questionText}"</p>
+            <p><strong>{questionToAnswer.username}:</strong> "{questionToAnswer.question_text}"</p>
         </div>
     {/if}
 
