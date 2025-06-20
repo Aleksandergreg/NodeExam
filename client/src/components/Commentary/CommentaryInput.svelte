@@ -39,17 +39,6 @@
 	}
 </script>
 
-<style>
-	/* Styles remain the same, adding one for the answered question */
-    .answering-question { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
-    .answering-question p { margin: 0; }
-	.comment-input-area { margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1.5rem; }
-	.form-group { margin-bottom: 1rem; }
-	.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; color: #333; }
-	.form-group input, .form-group textarea { width: 100%; min-height: 44px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; box-sizing: border-box; }
-	button { display: block; width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; }
-	button:disabled { background-color: #555; cursor: not-allowed; }
-</style>
 
 <div class="comment-input-area">
 	<h3>{questionToAnswer ? 'Answer Question' : 'Post a New Update'}</h3>
@@ -78,3 +67,16 @@
 		</button>
 	</form>
 </div>
+
+
+<style>
+	/* Styles remain the same, adding one for the answered question */
+    .answering-question { background-color: #fffbe6; border: 1px solid #ffe58f; padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
+    .answering-question p { margin: 0; }
+	.comment-input-area { margin-top: 2rem; border-top: 1px solid #eee; padding-top: 1.5rem; }
+	.form-group { margin-bottom: 1rem; }
+	.form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; color: #28a745; }
+	.form-group input, .form-group textarea { width: 100%; min-height: 44px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; box-sizing: border-box; }
+	button { display: block; width: 100%; padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+	button:disabled { background-color: #555; cursor: not-allowed; }
+</style>

@@ -6,7 +6,6 @@ export function isAuthenticated(req, res, next) {
   }
   
   export function isAdmin(req, res, next) {
-    // Look at the user's role that we stored in the session
     if (req.session && req.session.userRole === 'admin') {
       return next();
     }

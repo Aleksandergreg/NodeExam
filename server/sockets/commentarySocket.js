@@ -12,8 +12,12 @@ async function createAnswerComment(raceId, userId, username, question, answer) {
     return rows[0];
 }
 
+
+
 export function initializeSocketIO(io) {
     io.on("connection", (socket) => {
+
+        setTimeout(    socket.emit("server-sends-every-second"), 1000)
 
         socket.on("join_race_room", async (raceId) => { 
             socket.join(raceId);
