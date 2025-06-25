@@ -1,36 +1,33 @@
 import axios from 'axios';
-import { Filter } from 'bad-words'; 
+import { Filter } from 'bad-words';
 import pool, { query } from '../utils/db.js';
+import redisClient from '../utils/redis.js'; // Import the Redis client
 
-// Simple in-memory cache to store the news feed
-const newsCache = {
-    data: null,
-    lastFetch: 0,
-    CACHE_DURATION_MS: 15 * 60 * 1000, // 15 minutes
-};
 const filter = new Filter();
+const NEWS_CACHE_KEY = 'news_feed';
+const CACHE_DURATION_SECONDS = 15 * 60; // 15 minutes in seconds
 
 /**
  * Fetches the main news feed.
  * It uses a cache to avoid excessive API calls. It also fetches comment counts.
  */
 export const getNewsFeed = async (req, res, next) => {
-    const now = Date.now();
-    if (newsCache.data && (now - newsCache.lastFetch < newsCache.CACHE_DURATION_MS)) {
-        return res.status(200).send(newsCache.data);
-    }
-
     try {
+        const cachedNews = await redisClient.get(NEWS_CACHE_KEY);
+        if (cachedNews) {
+            return res.status(200).send(JSON.parse(cachedNews));
+        }
+
         const relevantDomains = 'cyclingnews.com,velonews.com,road.cc,cyclist.co.uk,bikeradar.com';
         const response = await axios.get(
             `https://newsapi.org/v2/everything?q=cycling&domains=${relevantDomains}&language=en&sortBy=publishedAt&pageSize=40&apiKey=${process.env.NEWS_API_KEY}`
         );
-        
+
         const articlesFromApi = response.data.articles.filter(a => a.urlToImage && a.description);
 
         if (articlesFromApi.length === 0) {
-            newsCache.data = [];
-            newsCache.lastFetch = now;
+            // Cache an empty array to prevent repeated API calls for an empty feed
+            await redisClient.setEx(NEWS_CACHE_KEY, CACHE_DURATION_SECONDS, JSON.stringify([]));
             return res.status(200).send([]);
         }
 
@@ -57,33 +54,39 @@ export const getNewsFeed = async (req, res, next) => {
         const articlesWithCounts = articlesFromApi.map((apiArticle, index) => {
             const localId = articleIds[index];
             const countRow = commentCounts.find(c => c.article_id === localId);
-            
+
             return {
                 id: localId,
                 title: apiArticle.title,
                 summary: apiArticle.description,
                 article_url: apiArticle.url,
-                image_url: apiArticle.urlToImage,       
-                source_name: apiArticle.source.name,    
-                published_at: apiArticle.publishedAt,  
+                image_url: apiArticle.urlToImage,
+                source_name: apiArticle.source.name,
+                published_at: apiArticle.publishedAt,
                 comment_count: countRow ? countRow.comment_count : 0,
             };
         });
-        
+
         // Update cache and send the final, normalized data
-        newsCache.data = articlesWithCounts;
-        newsCache.lastFetch = now;
-        
+        await redisClient.setEx(NEWS_CACHE_KEY, CACHE_DURATION_SECONDS, JSON.stringify(articlesWithCounts));
+
         res.status(200).send(articlesWithCounts);
 
     } catch (error) {
         console.error("Error in getNewsFeed:", error.message);
-        if (newsCache.data) {
-            return res.status(200).send(newsCache.data);
+        // If there's an error, try to serve from cache if it exists
+        try {
+            const cachedNews = await redisClient.get(NEWS_CACHE_KEY);
+            if (cachedNews) {
+                return res.status(200).send(JSON.parse(cachedNews));
+            }
+        } catch (cacheError) {
+            console.error("Error retrieving from cache during fallback:", cacheError.message);
         }
         next(error);
     }
 };
+
 /**
  * Gets a single article's details from our database.
  */
@@ -135,23 +138,23 @@ export const getArticleComments = async (req, res, next) => {
         const { userId } = req.session;
 
         const sql = `
-            SELECT 
+            SELECT
                 c.*,
                 CASE WHEN v.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS has_voted
-            FROM 
+            FROM
                 article_comments c
-            LEFT JOIN 
+            LEFT JOIN
                 comment_votes v ON c.id = v.comment_id AND v.user_id = $2
-            WHERE 
+            WHERE
                 c.article_id = $1
-            ORDER BY 
+            ORDER BY
                 c.upvotes DESC, c.created_at ASC;
         `;
-        
+
         const { rows: flatComments } = await query(sql, [article_id, userId]);
 
         const nestedComments = buildCommentTree(flatComments);
-        
+
         res.status(200).send(nestedComments);
     } catch (error) {
         next(error);
@@ -176,9 +179,9 @@ export const postArticleComment = async (req, res, next) => {
             'INSERT INTO article_comments (content, article_id, user_id, username, parent_comment_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [cleanContent, article_id, userId, username, req.body.parent_comment_id || null]
         );
-        
-        newsCache.data = null;
-        newsCache.lastFetch = 0;
+
+        // Invalidate the news cache since a new comment has been added
+        await redisClient.del(NEWS_CACHE_KEY);
 
         res.status(201).send(rows[0]);
     } catch (error) {
