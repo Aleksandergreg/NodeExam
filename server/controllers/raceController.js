@@ -48,3 +48,4 @@ export const searchRaces = async (req, res, next) => {
         next(error);
     }
 };
+

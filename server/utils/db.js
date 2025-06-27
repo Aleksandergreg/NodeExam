@@ -21,22 +21,22 @@ const pool = new Pool({
 });
 
 
-const testClient = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT || '5432', 10),
-});
+// const testClient = new Client({
+//     user: process.env.DB_USER,
+//     host: process.env.DB_HOST,
+//     database: process.env.DB_DATABASE,
+//     password: process.env.DB_PASSWORD,
+//     port: parseInt(process.env.DB_PORT || '5432', 10),
+// });
 
-testClient.connect(err => {
-    if (err) {
-        console.error('FATAL ERROR: Direct client connection test failed:', err.stack);
-        process.exit(1);
-    } else {
-        testClient.end();
-    }
-});
+// testClient.connect(err => {
+//     if (err) {
+//         console.error('FATAL ERROR: Direct client connection test failed:', err.stack);
+//         process.exit(1);
+//     } else {
+//         testClient.end();
+//     }
+// });
 
 
 
